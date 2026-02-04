@@ -1,0 +1,498 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 Dashboard de Pedidos</title>
+<style>
+body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; position: relative; }
+h1 { text-align: center; color: #333; margin-top: 40px; }
+table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; vertical-align: middle; }
+th { background: #2f7fb3; color: white; }
+select, button, input[type="number"], input[type="text"] { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
+input[type="number"] { text-align: right; width: 80px; }
+input[type="text"] { width: 250px; margin-bottom: 5px; }
+button { background: green; color: white; cursor: pointer; }
+button:hover { background: darkgreen; }
+ul { padding-left: 15px; margin: 5px 0; text-align: left; }
+.saldo { font-weight: bold; color: #dc3545; display: block; margin-top: 5px; }
+.assinatura { position: absolute; top: 10px; left: 10px; font-size: 12px; color: #555; }
+.status-amarelo { background: #fff3cd; color: #856404; font-weight: bold; }
+.status-Laranja { background: #544128; color: #fcad02; font-weight: bold; }
+.status-azul { background: #cce5ff; color: #004085; font-weight: bold; }
+.status-cinza { background: #e2e3e5; color: #383d41; font-weight: bold; }
+.status-lilas { background: #e2d6f3; color: #4a148c; font-weight: bold; }
+.status-amareloclaro { background: #d4edda; color: #d8d261; font-weight: bold; }
+.status-verde { background: #171b18; color: #00f7ff; font-weight: bold; }
+.status-verdeneon { background: #262f28; color: #5cc799; font-weight: bold; }
+.status-vermelho { background: #f8d7da; color: #721c24; font-weight: bold; }
+.filtros { text-align: center; margin: 20px 0; }
+.filtros button { margin: 5px; padding: 8px 12px; font-size: 14px; cursor: pointer; border: none; border-radius: 5px; background: #2f7fb3; color: white; }
+.filtros button:hover { opacity: 0.8; }
+.filtros button.ativo { background: #155d82; }
+#impressaoContainer { text-align:center; margin:20px 0; }
+#impressaoContainer select { width:200px; }
+/* Modal */
+#modalEditar { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+#modalEditar div { background:white; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90%; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+.linhaItem { display:flex; gap:5px; align-items:center; }
+.linhaItem input { flex:1; padding:5px; }
+.totalPedido { font-weight:bold; text-align:right; margin-top:5px; }
+.btn-receber {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-receber:hover {
+  background: #218838;
+}
+</style>
+</head>
+<body>
+<h1>📊 Dashboard de Pedidos</h1>
+<div style="text-align:center;">
+<input type="text" id="busca" placeholder="🔍 Buscar por cliente, produto ou telefone..." onkeyup="aplicarFiltros()">
+</div>
+
+<!-- 🔹 Filtros por Produto -->
+<div class="filtros" id="filtrosProdutos">
+<h3>Filtrar por Produto</h3>
+<button onclick="filtrarProdutos('Todos')" class="ativo">Todos</button>
+<button onclick="filtrarProdutos('Acrílico')">Acrílico</button>
+<button onclick="filtrarProdutos('Placa')">Placa</button>
+<button onclick="filtrarProdutos('Luminoso')">Luminoso</button>
+<button onclick="filtrarProdutos('Bandeira')">Bandeira</button>
+<button onclick="filtrarProdutos('Arte')">Arte</button>
+<button onclick="filtrarProdutos('Faixa')">Faixa </button>
+<button onclick="filtrarProdutos('Boné')">Boné</button>
+<button onclick="filtrarProdutos('Blusa')">Blusa</button>
+<button onclick="filtrarProdutos('Adesivos')">Adesivos</button>
+</div>
+
+<!-- 🔹 Impressão por Produto -->
+<div id="impressaoContainer">
+  <select id="produtoSelect">
+    <option value="">-- Selecione um Produto --</option>
+    <option value="Acrílico">Acrílico</option>
+    <option value="Placa">Placa</option>
+    <option value="Luminoso">Luminoso</option>
+    <option value="Bandeira">Bandeira</option>
+    <option value="Arte">Arte</option>
+    <option value="Faixa">Faixa</option>
+    <option value="Boné">Boné</option>
+    <option value="Blusa">Blusa</option>
+    <option value="Adesivos">Adesivos</option>
+  </select>
+  <button onclick="imprimirProduto()">🖨️ Imprimir</button>
+</div>
+
+
+<!-- 🔹 Filtros por Status -->
+<div class="filtros" id="filtrosStatus">
+<h3>Filtrar por Status</h3>
+<button onclick="filtrarStatus('Todos')" class="ativo">Todos</button>
+<button onclick="filtrarStatus('Aguardando Retorno')">Aguardando Retorno</button>
+<button onclick="filtrarStatus('Aguardando Alteração')">Aguardando Alteração</button>
+<button onclick="filtrarStatus('Arte não iniciada')">Arte não iniciada</button>
+<button onclick="filtrarStatus('Arte Aprovada')">Arte Aprovada</button>
+<button onclick="filtrarStatus('Produzindo')">Produzindo</button>
+<button onclick="filtrarStatus('Pedido Finalizado/Falta Pagamento')">Pedido Finalizado/Falta Pagamento</button>
+<button onclick="filtrarStatus('Pronto Para Envio')">Pronto Para Envio</button>
+<button onclick="filtrarStatus('Venda Concluida e Finalizada')">Venda Concluida e Finalizada</button>
+<button onclick="filtrarStatus('Cancelado')">Cancelado</button>
+</div>
+
+<table id="tabelaPedidos">
+<thead>
+<tr>
+<th>Vendedor</th>
+<th>Cliente</th>
+<th>Telefone</th>
+<th>Produtos</th>
+<th>Quantidade</th>
+<th>Valor Unitário (R$)</th>
+<th>Valor Total (R$)</th>
+<th>Valor Recebido (R$)</th>
+<th>Saldo Restante (R$)</th>
+<th>Data Pedido</th>
+<th>Data Entrega</th>
+<th>Status</th>
+<th>Anotações</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<div id="modalEditar">
+<div>
+<h3>Editar Pedido</h3>
+<div id="produtosContainer"></div>
+<label for="anotacoes">Anotações:</label>
+<textarea id="anotacoes" rows="3" style="width:100%; padding:5px;"></textarea>
+<button onclick="adicionarLinhaProduto()">➕ Adicionar Produto</button>
+<div class="totalPedido" id="totalPedido">Total: R$ 0.00</div>
+<button onclick="salvarEdicao()">💾 Salvar</button>
+<button onclick="fecharModal()">❌ Fechar</button>
+</div>
+</div>
+<script>
+// Verifica se o usuário está logado
+if(sessionStorage.getItem('isLoggedIn') !== 'true'){
+    window.location.href = 'login.html'; // redireciona para login
+}
+
+function removerAcentos(texto) {
+  return texto
+    .normalize("NFD") // separa acentos das letras
+    .replace(/[\u0300-\u036f]/g, ""); // remove acentos
+}
+
+window.todosPedidos = [];
+window.filtroProduto = "Todos";
+window.filtroStatus = "Todos";
+window.pedidoAtualEditar = null;
+
+// 🔹 Função para formatar datas corretamente no fuso local
+function formatarData(dataStr) {
+    if (!dataStr) return "";
+
+    // Caso já esteja no formato YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) {
+        const [ano, mes, dia] = dataStr.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    // Para strings com horário (ISO ou UTC)
+    const partes = dataStr.split("T")[0].split("-"); // pega só o YYYY-MM-DD
+    if (partes.length === 3) {
+        const [ano, mes, dia] = partes;
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    return "";
+}
+
+window.carregarPedidos = async function() {
+    const res = await fetch("/api/pedidos");
+    const novos = await res.json();
+
+    // 🔹 preserva dados antigos no frontend
+    novos.forEach(novo => {
+        const antigo = window.todosPedidos.find(p => p.id === novo.id);
+        if (antigo) {
+            if (antigo.anotacoes && (!novo.anotacoes || novo.anotacoes === "")) novo.anotacoes = antigo.anotacoes;
+            if (antigo.vendedor && (!novo.vendedor || novo.vendedor === "")) novo.vendedor = antigo.vendedor;
+            if (antigo.telefone_cliente && (!novo.telefone_cliente || novo.telefone_cliente === "")) novo.telefone_cliente = antigo.telefone_cliente;
+        }
+    });
+
+    window.todosPedidos = novos;
+    ordenarPedidos();
+    aplicarFiltros();
+}
+
+window.carregarPedidos = async function() {
+    const res = await fetch("/api/pedidos");
+    const novos = await res.json();
+
+    // 🔹 preserva dados antigos no frontend
+    novos.forEach(novo => {
+        const antigo = window.todosPedidos.find(p => p.id === novo.id);
+        if (antigo) {
+            if (antigo.anotacoes && (!novo.anotacoes || novo.anotacoes === "")) {
+                novo.anotacoes = antigo.anotacoes;
+            }
+            if (antigo.vendedor && (!novo.vendedor || novo.vendedor === "")) {
+                novo.vendedor = antigo.vendedor;
+            }
+            if (antigo.telefone_cliente && (!novo.telefone_cliente || novo.telefone_cliente === "")) {
+                novo.telefone_cliente = antigo.telefone_cliente;
+            }
+        }
+    });
+
+    window.todosPedidos = novos;
+    ordenarPedidos();
+    aplicarFiltros();
+}
+
+function ordenarPedidos() {
+    window.todosPedidos.sort((a, b) => {
+        if(a.status==="Venda Concluida e Finalizada" && b.status!=="Venda Concluida e Finalizada") return 1;
+        if(a.status!=="Venda Concluida e Finalizada" && b.status==="Venda Concluida e Finalizada") return -1;
+        return 0;
+    });
+}
+
+function renderizarTabela(pedidos) {
+    const tbody = document.querySelector("#tabelaPedidos tbody");
+    tbody.innerHTML = "";
+    pedidos.forEach((pedido)=>{
+        let tr=document.createElement("tr");
+        let produtosHTML="<ul>", quantidadesHTML="<ul>", valoresUnitHTML="<ul>", valorTotalPedido=0;
+        if(Array.isArray(pedido.itens)) pedido.itens.forEach(item=>{
+            produtosHTML+=`<li>${item.produto}</li>`;
+            quantidadesHTML+=`<li>${item.quantidade}</li>`;
+            valoresUnitHTML+=`<li>R$ ${Number(item.valorUnit).toFixed(2)}</li>`;
+            valorTotalPedido+=Number(item.valorUnit)*Number(item.quantidade);
+        });
+        produtosHTML+="</ul>"; quantidadesHTML+="</ul>"; valoresUnitHTML+="</ul>";
+        if(!pedido.valor_total) pedido.valor_total=valorTotalPedido;
+        const saldoRestante=(Number(pedido.valor_total)-Number(pedido.valor_recebido||0)).toFixed(2);
+        let statusClass="";
+        if(pedido.status==="Aguardando Retorno") statusClass="status-amarelo";
+        if(pedido.status==="Aguardando Alteração") statusClass="status-Laranja";
+        if(pedido.status==="Arte Aprovada") statusClass="status-azul";
+        if(pedido.status==="Arte não iniciada") statusClass="status-cinza";
+        if(pedido.status==="Produzindo") statusClass="status-lilas";
+        if(pedido.status==="Pedido Finalizado/Falta Pagamento") statusClass="status-amareloclaro";
+        if(pedido.status==="Pronto Para Envio") statusClass="status-verdeneon";
+        if(pedido.status==="Venda Concluida e Finalizada") statusClass="status-verdeneon";
+        if(pedido.status==="Cancelado") statusClass="status-vermelho";
+        tr.innerHTML=`
+            <td>${pedido.vendedor||""}</td>
+            <td>${pedido.nome_cliente||""}</td>
+            <td>${pedido.telefone_cliente||""}</td>
+            <td>${produtosHTML}</td>
+            <td>${quantidadesHTML}</td>
+            <td>${valoresUnitHTML}</td>
+            <td>R$ ${Number(pedido.valor_total).toFixed(2)}</td>
+            <td><input type="number" step="0.01" value="${pedido.valor_recebido||0}" onchange="atualizarValorRecebido(${pedido.id},parseFloat(this.value),'${pedido.status}','${pedido.vendedor}','${pedido.telefone_cliente}')"></td>
+            <td class="saldo" id="saldo-${pedido.id}">R$ ${saldoRestante}</td>
+            <td>${formatarData(pedido.data_pedido)}</td>
+            <td>${formatarData(pedido.data_entrega)}</td>
+            <td>
+                <select class="${statusClass}" onchange="atualizarStatus(${pedido.id},this.value,${pedido.valor_recebido||0},'${pedido.vendedor}','${pedido.telefone_cliente}')">
+                    <option value="Aguardando Retorno" ${pedido.status==="Aguardando Retorno"?"selected":""}>Aguardando Retorno</option>
+                    <option value="Aguardando Alteração" ${pedido.status==="Aguardando Alteração"?"selected":""}>Aguardando Alteração</option>
+                    <option value="Arte Aprovada" ${pedido.status==="Arte Aprovada"?"selected":""}>Arte Aprovada</option>
+                    <option value="Arte não iniciada" ${pedido.status==="Arte não iniciada"?"selected":""}>Arte não iniciada</option>
+                    <option value="Produzindo" ${pedido.status==="Produzindo"?"selected":""}>Produzindo</option>
+                    <option value="Pedido Finalizado/Falta Pagamento" ${pedido.status==="Pedido Finalizado/Falta Pagamento"?"selected":""}>Pedido Finalizado/Falta Pagamento</option>
+                    <option value="Pronto Para Envio" ${pedido.status==="Pronto Para Envio"?"selected":""}>Pronto Para Envio</option>
+                    <option value="Venda Concluida e Finalizada" ${pedido.status==="Venda Concluida e Finalizada"?"selected":""}>Venda Concluida e Finalizada</option>
+                    <option value="Cancelado" ${pedido.status==="Cancelado"?"selected":""}>Cancelado</option>
+                </select>
+            </td>
+            <td>${pedido.anotacoes || ""}</td>
+            <td>
+                <button onclick="editarPedido(${pedido.id})">✏️ Editar</button>
+                <button onclick="removerPedido(${pedido.id})">🗑️ Remover</button>
+                <button class="btn-receber" onclick="abrirRecebimento('${pedido.id}')">💳 Receber</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// -------------------- Filtros e busca --------------------
+window.aplicarFiltros = function(){
+    const termo = document.getElementById("busca").value.toLowerCase();
+    let filtrados = window.todosPedidos.filter(p=>{
+        let texto=`${p.nome_cliente} ${p.telefone_cliente} ${p.vendedor}`;
+        if(Array.isArray(p.itens)) texto+=p.itens.map(i=>i.produto).join(" ");
+        return texto.toLowerCase().includes(termo);
+    });
+    if(window.filtroProduto!=="Todos") {
+  const filtroNormalizado = removerAcentos(window.filtroProduto.toLowerCase());
+  filtrados = filtrados.filter(p =>
+    p.itens.some(i => removerAcentos(i.produto.toLowerCase()).includes(filtroNormalizado))
+  );
+}
+    if(window.filtroStatus!=="Todos") filtrados=filtrados.filter(p=>p.status===window.filtroStatus);
+    renderizarTabela(filtrados);
+}
+
+window.filtrarProdutos = function(produto){
+    window.filtroProduto = produto;
+    document.querySelectorAll("#filtrosProdutos button").forEach(b=>b.classList.remove("ativo"));
+    const btnAtivo = Array.from(document.querySelectorAll("#filtrosProdutos button")).find(b=>b.textContent===produto);
+    if(btnAtivo) btnAtivo.classList.add("ativo");
+    aplicarFiltros();
+}
+
+window.filtrarStatus = function(status){
+    window.filtroStatus = status;
+    document.querySelectorAll("#filtrosStatus button").forEach(b=>b.classList.remove("ativo"));
+    const btnAtivo = Array.from(document.querySelectorAll("#filtrosStatus button")).find(b=>b.textContent===status);
+    if(btnAtivo) btnAtivo.classList.add("ativo");
+    aplicarFiltros();
+}
+
+// -------------------- Atualização pedidos --------------------
+window.atualizarStatus = async function(id, novoStatus, valorRecebido, vendedor, telefone){
+    await fetch("/api/pedidos",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({id,status:novoStatus,valorRecebido,vendedor,telefoneCliente:telefone})});
+    carregarPedidos();
+}
+
+window.atualizarValorRecebido = async function(id, valorRecebido, status, vendedor, telefone){
+    await fetch("/api/pedidos",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({id,valorRecebido,status,vendedor,telefoneCliente:telefone})});
+    carregarPedidos();
+}
+
+window.removerPedido = async function(id){
+    if(confirm("Deseja realmente remover este pedido?")){
+        await fetch(`/api/pedidos?id=${id}`,{method:"DELETE"});
+        carregarPedidos();
+    }
+}
+
+// -------------------- Modal edição --------------------
+window.editarPedido = function(id){
+    window.pedidoAtualEditar = window.todosPedidos.find(p=>p.id===id);
+    if(!window.pedidoAtualEditar) return;
+    const modal = document.getElementById("modalEditar");
+    modal.style.display = "flex";
+    const container = document.getElementById("produtosContainer");
+    document.getElementById("anotacoes").value = window.pedidoAtualEditar.anotacoes || "";
+    container.innerHTML = "";
+    window.pedidoAtualEditar.itens.forEach((item,index)=>{criarLinhaProduto(item.produto,item.quantidade,item.valorUnit,index)});
+    atualizarTotalModal();
+}
+
+function criarLinhaProduto(produto="", quantidade=1, valorUnit=0, index=null){
+    const container=document.getElementById("produtosContainer");
+    const idx = index!==null?index:container.children.length;
+    const div=document.createElement("div");
+    div.className="linhaItem";
+    div.innerHTML=`
+        <input type="text" placeholder="Produto" value="${produto}" oninput="atualizarTotalModal()">
+        <input type="number" placeholder="Quantidade" value="${quantidade}" min="0" oninput="atualizarTotalModal()">
+        <input type="number" placeholder="Valor Unitário" value="${valorUnit}" step="0.01" min="0" oninput="atualizarTotalModal()">
+        <button onclick="removerLinhaProduto(this)">🗑️</button>
+    `;
+    container.appendChild(div);
+}
+
+window.adicionarLinhaProduto = function(){ criarLinhaProduto(); }
+window.removerLinhaProduto = function(btn){ btn.parentElement.remove(); atualizarTotalModal(); }
+
+function atualizarTotalModal(){
+    const container=document.getElementById("produtosContainer");
+    let total=0;
+    Array.from(container.children).forEach(div=>{
+        const inputs=div.querySelectorAll("input");
+        const q=Number(inputs[1].value||0);
+        const v=Number(inputs[2].value||0);
+        total+=q*v;
+    });
+    document.getElementById("totalPedido").textContent = `Total: R$ ${total.toFixed(2)}`;
+}
+
+window.salvarEdicao = async function(){
+    const container = document.getElementById("produtosContainer");
+    const novosItens = Array.from(container.children).map(div=>({
+        produto: div.querySelector("input[type=text]").value,
+        quantidade: Number(div.querySelectorAll("input[type=number]")[0].value),
+        valorUnit: Number(div.querySelectorAll("input[type=number]")[1].value)
+    }));
+    const id = window.pedidoAtualEditar.id;
+    const anotacoes = document.getElementById("anotacoes").value;
+    await fetch("/api/pedidos", { method: "PUT", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ id, itens: novosItens, anotacoes }) });
+    const pedido = window.todosPedidos.find(p=>p.id===id);
+    if(pedido){
+        pedido.itens = novosItens;
+        pedido.valor_total = novosItens.reduce((acc,item)=>acc + item.quantidade * item.valorUnit, 0);
+        pedido.anotacoes = anotacoes;
+    }
+    fecharModal();
+    carregarPedidos();
+}
+
+
+let pedidoSelecionado = null;
+
+async function abrirRecebimento(idPedido) {
+  try {
+    const res = await fetch(`/api/pedidos/${idPedido}`);
+    const pedido = await res.json();
+
+    if (!res.ok) {
+      alert("❌ Erro ao carregar pedido");
+      return;
+    }
+
+    pedidoSelecionado = pedido;
+
+    // Abre a tela de recebimento
+    window.location.href = `recebimento.html?id=${pedido.id}`;
+  } catch (err) {
+    alert("❌ Erro de conexão: " + err.message);
+  }
+}
+
+window.fecharModal=function(){document.getElementById("modalEditar").style.display="none";}
+
+// Inicializa
+carregarPedidos();
+
+function sair() {
+    sessionStorage.removeItem('isLoggedIn');
+    window.location.href = "login.html";
+}
+
+// 🔹 Impressão filtrada por produto
+function imprimirProduto() {
+  let produtoEscolhido = document.getElementById("produtoSelect").value;
+  if (!produtoEscolhido) {
+    alert("Selecione um produto para imprimir!");
+    return;
+  }
+
+  let statusPermitidos = ["Aguardando Retorno", "Arte Aprovada", "Arte não iniciada"];
+
+let pedidosFiltrados = window.todosPedidos.filter(p =>
+  statusPermitidos.includes(p.status) &&
+  p.itens && p.itens.some(i => 
+  removerAcentos(i.produto.toLowerCase()).includes(removerAcentos(produtoEscolhido.toLowerCase()))
+  ))
+
+  if (pedidosFiltrados.length === 0) {
+    alert("Nenhum pedido encontrado para este produto.");
+    return;
+  }
+
+  let conteudo = "<h2>Pedidos - " + produtoEscolhido + "</h2>";
+  conteudo += "<table border='1' cellspacing='0' cellpadding='5' style='width:100%; border-collapse: collapse;'>";
+  conteudo += "<tr><th>Cliente</th><th>Telefone</th><th>Produto</th><th>Qtd</th><th>Vlr Unit</th><th>Vlr Total</th><th>Data Pedido</th><th>Data Entrega</th><th>Status</th></tr>";
+
+  pedidosFiltrados.forEach(p => {
+    p.itens.forEach(item => {
+      if (removerAcentos(item.produto.toLowerCase()).includes(removerAcentos(produtoEscolhido.toLowerCase()))) {
+        conteudo += "<tr>" +
+          "<td>" + (p.nome_cliente || "") + "</td>" +
+          "<td>" + (p.telefone_cliente || "") + "</td>" +
+          "<td>" + item.produto + "</td>" +
+          "<td>" + item.quantidade + "</td>" +
+          "<td>R$ " + Number(item.valorUnit).toFixed(2) + "</td>" +
+          "<td>R$ " + (item.quantidade * item.valorUnit).toFixed(2) + "</td>" +
+          "<td>" + (p.data_pedido ? formatarData(p.data_pedido) : "") + "</td>" +
+          "<td>" + (p.data_entrega ? formatarData(p.data_entrega) : "") + "</td>" +
+          "<td>" + (p.status || "") + "</td>" +
+        "</tr>";
+      }
+    });
+  });
+
+  conteudo += "</table>";
+
+  let janela = window.open("", "", "width=900,height=650");
+  janela.document.write("<html><head><title>Pedidos - " + produtoEscolhido + "</title>");
+  janela.document.write("<style> body{font-family:Arial} table{margin-top:10px;} th,td{padding:6px; text-align:center;} th{background:#f0f0f0;} </style>");
+  janela.document.write("</head><body>" + conteudo + "</body></html>");
+  janela.document.close();
+  janela.print();
+}
+
+</script>
+</body>
+</html>

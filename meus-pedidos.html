@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📦 Meus Pedidos</title>
+<style>
+body { font-family: "Segoe UI", Arial, sans-serif; background: #f4f7fb; margin: 0; padding: 20px; }
+h1 { text-align: center; color: #2f7fb3; margin-bottom: 20px; }
+.pedido-card { background: white; border-radius: 10px; box-shadow: 0px 3px 10px rgba(0,0,0,0.1); padding: 15px; margin-bottom: 15px; transition: transform 0.3s, box-shadow 0.3s, opacity 0.5s; opacity: 0; }
+.pedido-card.show { opacity: 1; }
+.pedido-card:hover { transform: translateY(-3px); box-shadow: 0px 5px 15px rgba(0,0,0,0.15); }
+.pedido-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #333; flex-wrap: wrap; }
+.pedido-info { margin-top: 10px; font-size: 14px; color: #555; }
+.pedido-info ul { padding-left: 20px; margin: 5px 0; }
+.status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+.pendente { background: #fff3cd; color: #856404; }
+.aprovada { background: #cce5ff; color: #004085; }
+.finalizado { background: #d4edda; color: #155724; }
+.cancelado { background: #f8d7da; color: #721c24; }
+.voltar-topo { position: fixed; top: 60px; left: 20px; background: #2f7fb3; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background 0.3s; z-index: 1100; }
+.voltar-topo:hover { background: #25658d; }
+.dev-credit { position: fixed; top: 5px; left: 10px; font-size: 11px; color: #555; font-style: italic; z-index: 1000; }
+.msg { text-align: center; color: #666; margin-top: 40px; font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="dev-credit">Desenvolvido por <strong>MTScomputadores</strong></div>
+<a href="index.html" class="voltar-topo">⬅ Voltar</a>
+<h1>📦 Meus Pedidos</h1>
+<div id="listaPedidos"></div>
+
+<script>
+// Verifica se o usuário está logado
+if(sessionStorage.getItem('isLoggedIn') !== 'true'){
+    window.location.href = 'login.html';
+}
+
+function formatarData(dataStr) {
+    if (!dataStr) return "-";
+
+    // Se já vier no formato YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) {
+        const [ano, mes, dia] = dataStr.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    // Se vier no formato ISO com horário (ex: 2025-08-27T00:00:00.000Z)
+    if (dataStr.includes("T")) {
+        const [ano, mes, dia] = dataStr.split("T")[0].split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    // Fallback (casos fora do padrão)
+    const data = new Date(dataStr);
+    return isNaN(data) ? "-" : data.toLocaleDateString("pt-BR");
+}
+
+function formatarMoeda(valor) {
+    return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+async function carregarPedidos() {
+    const lista = document.getElementById("listaPedidos");
+    try {
+        const res = await fetch("/api/pedidos");
+        const pedidos = await res.json();
+        if (!pedidos || pedidos.length === 0) {
+            lista.innerHTML = "<p class='msg'>Nenhum pedido encontrado.</p>";
+            return;
+        }
+        pedidos.sort((a, b) => new Date(b.data_pedido || b.dataPedido) - new Date(a.data_pedido || a.dataPedido));
+        lista.innerHTML = "";
+        pedidos.forEach(p => {
+            const card = document.createElement("div");
+            card.classList.add("pedido-card");
+
+            let statusClasse = "pendente";
+            const s = (p.status || "").toLowerCase();
+            if (s.includes("aprovada")) statusClasse = "aprovada";
+            else if (s.includes("finalizado")) statusClasse = "finalizado";
+            else if (s.includes("cancelado")) statusClasse = "cancelado";
+
+            let produtosHTML = "<ul>";
+            if (p.itens) p.itens.forEach(i => {
+                let qtd = parseFloat(i.quantidade) || 0;
+                let unit = parseFloat(i.valorUnit) || 0;
+                let totalItem = qtd * unit;
+                produtosHTML += `<li>${i.produto} - ${qtd} un. (${formatarMoeda(unit)}) - Total: ${formatarMoeda(totalItem)}</li>`;
+            });
+            produtosHTML += "</ul>";
+
+            let anotacoesHTML = p.anotacoes ? `<p><b>Anotações:</b> ${p.anotacoes}</p>` : '';
+
+            card.innerHTML = `
+                <div class="pedido-header">
+                    <span>📋 Pedido de ${p.vendedor}</span>
+                    <span class="status ${statusClasse}">${p.status || "Aguardando Retorno"}</span>
+                </div>
+                <div class="pedido-info">
+                    <p><b>Cliente:</b> ${p.nome_cliente || p.nomeCliente}</p>
+                    <p><b>Telefone:</b> ${p.telefone_cliente || p.telefoneCliente}</p>
+                    <p><b>Produtos:</b> ${produtosHTML}</p>
+                    ${anotacoesHTML}
+                    <p><b>Valor total:</b> ${formatarMoeda(parseFloat(p.valor_total || p.valorTotal))}</p>
+                    <p><b>Valor Recebido:</b> ${formatarMoeda(parseFloat(p.valor_recebido || p.valorRecebido))}</p>
+                    <p><b>Data Pedido:</b> ${formatarData(p.data_pedido || p.dataPedido)}</p>
+                    <p><b>Data Entrega:</b> ${formatarData(p.data_entrega || p.dataEntrega)}</p>
+                </div>
+            `;
+            lista.appendChild(card);
+            setTimeout(() => card.classList.add("show"), 50);
+        });
+    } catch (err) {
+        lista.innerHTML = `<p class='msg' style="color:red;">Erro ao carregar pedidos: ${err.message}</p>`;
+    }
+}
+
+carregarPedidos();
+setInterval(carregarPedidos, 5000);
+</script>
+</body>
+</html>

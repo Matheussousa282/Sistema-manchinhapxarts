@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📊 Sistema </title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar lateral */
+    .sidebar {
+      width: 220px;
+      background: #1e1e2f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    /* Espaço para jogar os botões um pouco mais para baixo */
+    .menu {
+      margin-top: 95px; /* ajuste aqui a altura que quiser */
+      flex-grow: 1; /* empurra o rodapé para baixo */
+    }
+
+    .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* centraliza o texto/ícone */
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.3s;
+  width: 100%; /* 🔹 força todos os botões a ocupar a largura da sidebar */
+  box-sizing: border-box; /* garante que padding não quebre o alinhamento */
+}
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    .btn svg {
+      margin-right: 2px;
+      pointer-events: none;
+    }
+
+    /* Área principal */
+    .main {
+      flex: 1;
+      background: #fff;
+      overflow-y: auto;
+      padding: 30px;
+    }
+
+    /* Deixa o iframe ocupar bem o espaço */
+    .main iframe {
+      width: 100%;
+      height: calc(100vh - 40px);
+      border: none;
+    }
+
+    /* Assinatura no rodapé da sidebar */
+    .assinatura {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #aaa;
+      text-align: center;
+    }
+    .assinatura a {
+      text-decoration: none;
+      color: #2f7fb3;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    
+    <!-- Grupo de botões principais -->
+    <div class="menu">
+      <button class="btn" onclick="abrirPagina('dashboard')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+          <path d="M12 3l9 9h-3v9h-12v-9h-3l9-9z"/>
+        </svg>
+        <span>Dashboard</span>  
+      </button>
+
+      <button class="btn" onclick="abrirPagina('pedidos')">
+        📦 Pedidos       
+      </button>
+    </div>
+
+    <!-- Botão sair -->
+    <button class="btn" style="margin-top:auto; background:#dc3545;" onclick="sair()">
+      🔒 Sair
+    </button>
+
+    <!-- Assinatura -->
+    <div class="assinatura">
+      Desenvolvido por 
+      <a href="https://instagram.com/mts_computadores" target="_blank">MTScomputadores</a>
+    </div>
+  </div>
+
+  <!-- Área principal -->
+  <div class="main" id="conteudo">
+    <h1>Bem-vindo ao sistema Mpx Arts</h1>
+    <p>Escolha uma opção no menu lateral para começar.</p>
+  </div>
+
+  <script>
+      // Protege o painel: se não estiver logado nesta sessão, redireciona para login
+      if(sessionStorage.getItem('isLoggedIn') !== 'true')
+          window.location.href = 'login.html';
+  
+      function abrirPagina(pagina) {
+        const conteudo = document.getElementById("conteudo");
+
+        if (pagina === "dashboard") {
+          conteudo.innerHTML = `<iframe src="dashboard.html"></iframe>`;
+        }
+
+        if (pagina === "pedidos") {
+          conteudo.innerHTML = `<iframe src="meus-pedidos.html"></iframe>`;
+        }
+      }
+
+      // Função de logout
+      function sair() {
+          sessionStorage.removeItem('isLoggedIn'); // limpa o login
+          window.location.href = "login.html"; // redireciona para login
+      }
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!-- Login Neon -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* --- MESMO CSS DO LOGIN NEON --- */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#0a0a0a;
+  overflow:hidden;
+}
+.particles{position:absolute;width:100%;height:100%;z-index:-2;overflow:hidden;}
+.particle{position:absolute;border-radius:50%;animation:float linear infinite;}
+@keyframes float{0%{transform:translateY(100vh) translateX(0);opacity:0;}50%{opacity:1;}100%{transform:translateY(-10vh) translateX(50px);opacity:0;}}
+.login-container{position:relative;background: rgba(0,0,0,0.9);padding:40px 30px;border-radius:16px;box-shadow:0 0 30px rgba(255,230,0,0.8);width:380px;text-align:center;z-index:1;border:2px solid #ffe600;animation:fadeIn 1s ease-in-out;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+.login-container h2{margin-bottom:30px;color:#e9d738;font-weight:700;font-size:32px;text-shadow:0 0 5px #eddd52,0 0 10px #e9e33a,0 0 20px #f0ea38;animation:glowTitle 2s infinite alternate;}
+@keyframes glowTitle{from{text-shadow:0 0 5px #f5e235,0 0 10px #f3ec2e,0 0 20px #eae428;}to{text-shadow:0 0 15px #eedb30,0 0 25px #eae431,0 0 40px #e7e12c;}}
+.input-group{position:relative;margin-bottom:25px;}
+.input-group i{position:absolute;top:12px;left:12px;color:#ffe600;font-size:16px;transition:all 0.3s;text-shadow:0 0 5px #ffe600,0 0 10px #fff700;}
+.input-group input{width:100%;padding:12px 40px;border:1px solid #ffe600;border-radius:10px;font-size:16px;background:rgba(0,0,0,0.8);color:#fff;transition:all 0.3s;text-shadow:0 0 3px #fff;}
+.input-group input::placeholder{color:#ffe600;opacity:0.7;}
+.input-group input:focus{border-color:#fff700;box-shadow:0 0 10px #ffe600,0 0 20px #fff700;outline:none;}
+.input-group input:focus + i{color:#fff700;}
+.login-container button{width:100%;padding:14px;background:#eeda1d;border:none;border-radius:10px;color:#000;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s;box-shadow:0 0 5px #e3d01d,0 0 10px #eee823,0 0 20px #f0e814;animation:glowButton 2s infinite alternate;}
+.login-container button:hover{background:#e4de20;transform:translateY(-2px);box-shadow:0 0 15px #e3d021,0 0 25px #f0e91c,0 0 35px #e6e01e;}
+@keyframes glowButton{from{box-shadow:0 0 5px #e4d021,0 0 10px #fff700,0 0 20px #fff700;}to{box-shadow:0 0 15px #f3dd18,0 0 25px #fff700,0 0 40px #fff700;}}
+.login-container .forgot{margin-top:15px;font-size:14px;color:#ffe600;text-decoration:none;display:inline-block;text-shadow:0 0 5px #ffe600;}
+.login-container .forgot:hover{color:#fff700;}
+.message{margin-top:15px;font-size:14px;color:#ff4d4d;display:none;font-weight:600;text-shadow:0 0 5px #ff4d4d;}
+@media(max-width:400px){.login-container{width:90%;padding:30px 20px;}}
+</style>
+</head>
+<body>
+<div class="particles"></div>
+
+<div class="login-container">
+<h2>Entrar</h2>
+<form id="loginForm">
+  <div class="input-group">
+    <input type="text" placeholder="Usuário" required id="username">
+    <i class="fa fa-user"></i>
+  </div>
+  <div class="input-group">
+    <input type="password" placeholder="Senha" required id="password">
+    <i class="fa fa-lock"></i>
+  </div>
+  <button type="submit">Login</button>
+  <a href="#" class="forgot">Esqueceu a senha?</a>
+  <div class="message" id="message">Usuário ou senha incorretos!</div>
+</form>
+</div>
+
+<script>
+// Partículas neon flutuantes
+const particlesContainer=document.querySelector('.particles');
+for(let i=0;i<60;i++){
+  let particle=document.createElement('div');
+  particle.classList.add('particle');
+  particle.style.left=Math.random()*100+'%';
+  particle.style.width=particle.style.height=(Math.random()*6 +4)+'px';
+  particle.style.background=`rgba(255, ${180 + Math.floor(Math.random()*50)}, 0, ${0.5 + Math.random()*0.5})`;
+  particle.style.boxShadow=`0 0 ${5 + Math.random()*10}px rgba(255, ${180 + Math.floor(Math.random()*50)}, 0, 0.8)`;
+  particle.style.animationDuration=(5 + Math.random()*10)+'s';
+  particle.style.animationDelay=Math.random()*5+'s';
+  particlesContainer.appendChild(particle);
+}
+
+// Feedback de login + redirecionamento
+const form=document.getElementById('loginForm');
+const message=document.getElementById('message');
+form.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const username=document.getElementById('username').value;
+  const password=document.getElementById('password').value;
+  if(username === 'admin' && password === '9077'){
+    message.style.display = 'none';
+    // Marca que o usuário está logado
+    sessionStorage.setItem('isLoggedIn', 'true');
+    window.location.href = 'painel.html';
+}else{
+    message.style.display = 'block';
+}
+});
+</script>
+</body>
+</html>

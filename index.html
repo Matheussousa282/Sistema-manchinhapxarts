@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📦 Cadastro de Pedido</title>
+<style>
+:root {
+    --primary: #2f7fb3; --primary-hover: #25658d;
+    --success: #28a745; --success-hover: #218838;
+    --danger: #dc3545; --danger-hover: #b02a37;
+    --light-bg: #19191a; --white: #effa4f;
+    --gray: #333; --border-color: #ccc;
+}
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--light-bg);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; margin: 0; padding: 15px;
+}
+.container {
+    background: var(--white);
+    width: 100%; max-width: 500px; padding: 30px;
+    border-radius: 12px; box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+}
+h1 { text-align: center; margin-bottom: 20px; font-size: 24px; color: var(--primary);}
+h1::before { content: "📋 "; }
+.form-group { margin-bottom: 15px; }
+label { font-weight: 600; display: block; margin-bottom: 5px; color: var(--gray); }
+input { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; transition:0.3s;}
+input:focus { border-color: var(--primary); outline: none; box-shadow:0 0 6px rgba(47,127,179,0.3);}
+.dates { display:flex; gap:10px;}
+.dates input { flex:1; }
+button { padding:10px 16px; border:none; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer; transition:0.3s;}
+.btn-primary { background:var(--primary); color:var(--white);}
+.btn-primary:hover { background:var(--primary-hover);}
+.btn-success { background:var(--success); color:var(--white);}
+.btn-success:hover { background:var(--success-hover);}
+.btn-danger { background:var(--danger); color:var(--white);}
+.btn-danger:hover { background:var(--danger-hover);}
+.view-orders { display:block; text-align:center; margin-top:15px; color:var(--primary); text-decoration:none; font-weight:bold;}
+.view-orders:hover { text-decoration:underline;}
+.item-block { border:1px solid #ddd; padding:5px; border-radius:8px; margin-bottom:10px; background:#fafafa;}
+.total-pedido { font-weight:bold; color:var(--success); font-size:18px; background:#e9f7ef; padding:8px 12px; border-radius:8px; text-align:center;}
+.footer { text-align:center; margin-top:20px; font-size:12px; color:#555; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Cadastro de Pedido</h1>
+<form id="pedidoForm">
+    <div class="form-group">
+        <label for="seuNome">Vendedor</label>
+        <input type="text" id="seuNome" placeholder="Digite seu nome" required>
+    </div>
+    <div class="form-group">
+        <label for="nomeCliente">Nome do Cliente</label>
+        <input type="text" id="nomeCliente" placeholder="Digite o nome do cliente" required>
+    </div>
+    <div class="form-group">
+        <label for="telefoneCliente">Telefone do Cliente</label>
+        <input type="tel" id="telefoneCliente" placeholder="(XX) XXXXX-XXXX" required>
+    </div>
+
+    <div id="itensContainer">
+        <div class="item-block">
+            <div class="form-group">
+                <label>Produto</label>
+                <input type="text" placeholder="Digite o produto" required>
+            </div>
+            <div class="form-group">
+                <label>Quantidade</label>
+                <input type="number" placeholder="Ex: 10" required>
+            </div>
+            <div class="form-group">
+                <label>Valor Unitário (R$)</label>
+                <input type="number" step="0.01" placeholder="Ex: 9.90" required>
+            </div>
+            <button type="button" class="btn-danger btn-excluir">❌ Excluir</button>
+        </div>
+    </div>
+
+    <button type="button" class="btn-success" id="btnAddItem">+ Adicionar Item</button>
+
+    <div class="form-group">
+    <label for="anotacoes">Anotações</label>
+    <textarea id="anotacoes" placeholder="Digite suas observações" rows="4" style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:8px; font-size:14px;"></textarea>
+</div>
+
+    <div class="dates form-group">
+        <div>
+            <label for="dataPedido">Dt. Pedido</label>
+            <input type="text" id="dataPedido" readonly>
+        </div>
+        <div>
+            <label for="dataEntrega">Prev. Entrega</label>
+            <input type="date" id="dataEntrega">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Valor Recebido</label>
+        <input type="number" step="0.01" id="valorRecebido" placeholder="Digite o Valor" required>
+    </div>
+
+    <div class="form-group total-pedido">
+        💰 Valor Total do Pedido: <span id="valorTotalPedido">0,00</span> R$
+    </div>
+
+    <button type="submit" class="btn-primary">📤 Enviar Pedido</button>
+</form>
+<a href="meus-pedidos.html" class="view-orders">🔍 Ver Meus Pedidos</a>
+<p class="footer">Desenvolvido por <strong>MTScomputadores</strong></p>
+</div>
+
+<script>
+const hoje = new Date();
+const entrega = new Date();
+entrega.setDate(hoje.getDate() + 10);
+const dataPedidoEl = document.getElementById("dataPedido");
+const dataEntregaEl = document.getElementById("dataEntrega");
+
+// Função corrigida: gera YYYY-MM-DD local sem fuso horário
+function formatDateLocal(date){
+    const ano = date.getFullYear();
+    const mes = String(date.getMonth() + 1).padStart(2, "0");
+    const dia = String(date.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+}
+
+// Preencher os campos com datas locais
+dataPedidoEl.value = formatDateLocal(hoje);
+dataEntregaEl.value = formatDateLocal(entrega);
+
+function atualizarValorTotal(){
+    let total = 0;
+    document.querySelectorAll("#itensContainer .item-block").forEach(block=>{
+        const quantidade = parseFloat(block.querySelector("input[placeholder^='Ex:']").value) || 0;
+        const valorUnit = parseFloat(block.querySelector("input[step]").value) || 0;
+        total += quantidade*valorUnit;
+    });
+    document.getElementById("valorTotalPedido").textContent = total.toFixed(2).replace('.',',');
+}
+
+function criarItem(){
+    const item = document.createElement("div");
+    item.classList.add("item-block");
+    item.innerHTML=`
+        <div class="form-group">
+            <label>Produto</label>
+            <input type="text" placeholder="Digite o produto" required>
+        </div>
+        <div class="form-group">
+            <label>Quantidade</label>
+            <input type="number" placeholder="Ex: 10" required>
+        </div>
+        <div class="form-group">
+            <label>Valor Unitário (R$)</label>
+            <input type="number" step="0.01" placeholder="Ex: 9.90" required>
+        </div>
+        <button type="button" class="btn-danger btn-excluir">❌ Excluir</button>
+    `;
+    item.querySelector(".btn-excluir").addEventListener("click", ()=>{
+        item.remove();
+        atualizarValorTotal();
+    });
+    return item;
+}
+
+document.getElementById("btnAddItem").addEventListener("click", ()=>{
+    document.getElementById("itensContainer").appendChild(criarItem());
+});
+
+document.addEventListener("input", e=>{
+    if(e.target.closest("#itensContainer")) atualizarValorTotal();
+});
+
+// Envio via API Neon (PostgreSQL)
+document.getElementById("pedidoForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const itens=[];
+    document.querySelectorAll("#itensContainer .item-block").forEach(block=>{
+        const produto = block.querySelector("input[placeholder='Digite o produto']").value;
+        const quantidade = parseInt(block.querySelector("input[placeholder^='Ex:']").value)||0;
+        const valorUnit = parseFloat(block.querySelector("input[step]").value)||0;
+        itens.push({produto,quantidade,valorUnit,total:quantidade*valorUnit});
+    });
+    const pedido = {
+        vendedor: document.getElementById("seuNome").value,
+        nomeCliente: document.getElementById("nomeCliente").value,
+        telefoneCliente: document.getElementById("telefoneCliente").value,
+        itens,
+        anotacoes: document.getElementById("anotacoes").value,
+        dataPedido: formatDateLocal(hoje),
+        dataEntrega: formatDateLocal(entrega),
+        valorTotal: itens.reduce((acc,i)=>acc+i.total,0),
+        valorRecebido: parseFloat(document.getElementById("valorRecebido").value)||0,
+        status:"Aguardando Retorno"
+    };
+
+    try{
+        const res = await fetch("/api/pedidos",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(pedido)
+        });
+        const data = await res.json();
+        if(res.ok){
+            alert("✅ Pedido cadastrado com sucesso!");
+            this.reset();
+            dataPedidoEl.value = formatDateLocal(hoje);
+            dataEntregaEl.value = formatDateLocal(entrega);
+            document.getElementById("itensContainer").innerHTML="";
+            document.getElementById("itensContainer").appendChild(criarItem());
+            atualizarValorTotal();
+        }else{
+            alert("❌ Erro: "+data.error);
+        }
+    }catch(err){
+        alert("❌ Erro de conexão: "+err.message);
+    }
+});
+</script>
+</body>
+</html>

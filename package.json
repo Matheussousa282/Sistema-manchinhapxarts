@@ -1,0 +1,10 @@
+{
+  "name": "pedido",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "dayjs": "^1.11.14",
+    "mongodb": "^5.7.0",
+    "pg": "^8.16.3"
+  }
+}

@@ -6,218 +6,594 @@
 <title>📦 Cadastro de Pedido</title>
 <style>
 :root {
-    --primary: #2f7fb3; --primary-hover: #25658d;
-    --success: #28a745; --success-hover: #218838;
-    --danger: #dc3545; --danger-hover: #b02a37;
-    --light-bg: #19191a; --white: #effa4f;
-    --gray: #333; --border-color: #ccc;
+    --primary: #2f7fb3;
+    --primary-hover: #25658d;
+    --success: #28a745;
+    --success-hover: #218838;
+    --danger: #dc3545;
+    --danger-hover: #b02a37;
+    --yellow: #effa4f;
+    --dark: #19191a;
+    --gray: #333;
+    --border-color: #ccc;
 }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     font-family: "Segoe UI", Arial, sans-serif;
-    background: var(--light-bg);
-    display: flex; justify-content: center; align-items: center;
-    min-height: 100vh; margin: 0; padding: 15px;
+    background: var(--dark);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 30px 15px 60px;
 }
 .container {
-    background: var(--white);
-    width: 100%; max-width: 500px; padding: 30px;
-    border-radius: 12px; box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+    background: var(--yellow);
+    width: 100%;
+    max-width: 520px;
+    padding: 28px 26px;
+    border-radius: 14px;
+    box-shadow: 0px 6px 28px rgba(0,0,0,0.35);
 }
-h1 { text-align: center; margin-bottom: 20px; font-size: 24px; color: var(--primary);}
-h1::before { content: "📋 "; }
-.form-group { margin-bottom: 15px; }
-label { font-weight: 600; display: block; margin-bottom: 5px; color: var(--gray); }
-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; transition:0.3s;}
-input:focus { border-color: var(--primary); outline: none; box-shadow:0 0 6px rgba(47,127,179,0.3);}
-.dates { display:flex; gap:10px;}
-.dates input { flex:1; }
-button { padding:10px 16px; border:none; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer; transition:0.3s;}
-.btn-primary { background:var(--primary); color:var(--white);}
-.btn-primary:hover { background:var(--primary-hover);}
-.btn-success { background:var(--success); color:var(--white);}
-.btn-success:hover { background:var(--success-hover);}
-.btn-danger { background:var(--danger); color:var(--white);}
-.btn-danger:hover { background:var(--danger-hover);}
-.view-orders { display:block; text-align:center; margin-top:15px; color:var(--primary); text-decoration:none; font-weight:bold;}
-.view-orders:hover { text-decoration:underline;}
-.item-block { border:1px solid #ddd; padding:5px; border-radius:8px; margin-bottom:10px; background:#fafafa;}
-.total-pedido { font-weight:bold; color:var(--success); font-size:18px; background:#e9f7ef; padding:8px 12px; border-radius:8px; text-align:center;}
-.footer { text-align:center; margin-top:20px; font-size:12px; color:#555; }
+
+/* ── Header ── */
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    border-bottom: 2px solid rgba(47,127,179,0.25);
+    padding-bottom: 16px;
+}
+.page-title h1 { font-size: 22px; color: var(--primary); font-weight: 700; }
+.page-title .emoji { font-size: 26px; }
+
+/* ── Seções ── */
+.section {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px 16px 12px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: #dde; }
+
+/* ── Tipo de Pedido ── */
+.tipo-pedido-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.tipo-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 10px;
+    border: 2px solid #dde;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f7f9ff;
+    user-select: none;
+}
+.tipo-btn:hover { border-color: var(--primary); background: #eef4fb; }
+.tipo-btn.ativo-presencial {
+    border-color: var(--success);
+    background: #eafaf1;
+    box-shadow: 0 0 0 3px rgba(40,167,69,0.15);
+}
+.tipo-btn.ativo-online {
+    border-color: var(--primary);
+    background: #eef4fb;
+    box-shadow: 0 0 0 3px rgba(47,127,179,0.15);
+}
+.tipo-btn .tipo-icone { font-size: 26px; }
+.tipo-btn .tipo-texto {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray);
+}
+.tipo-btn .tipo-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #dde;
+    color: #666;
+    transition: all 0.2s;
+}
+.tipo-btn.ativo-presencial .tipo-badge {
+    background: var(--success);
+    color: #fff;
+}
+.tipo-btn.ativo-online .tipo-badge {
+    background: var(--primary);
+    color: #fff;
+}
+.tipo-btn .tipo-check {
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.tipo-btn.ativo-presencial .tipo-check,
+.tipo-btn.ativo-online .tipo-check { opacity: 1; }
+
+/* ── Form ── */
+.form-group { margin-bottom: 12px; }
+.form-group:last-child { margin-bottom: 0; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+label { display: block; font-size: 12px; font-weight: 600; color: var(--gray); margin-bottom: 4px; }
+input, textarea, select {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--gray);
+    background: #fafafa;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    outline: none;
+    appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(47,127,179,0.15);
+    background: #fff;
+}
+input[readonly] { background: #f0f0f0; color: #777; cursor: default; }
+textarea { resize: vertical; min-height: 72px; }
+
+/* ── Item block ── */
+.item-block {
+    border: 1px solid #dde;
+    background: #f7f9ff;
+    border-radius: 9px;
+    padding: 14px 14px 10px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.item-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--primary); }
+.item-subtotal { font-size: 13px; font-weight: 700; color: var(--success); }
+.item-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
+
+/* ── Desconto ── */
+.discount-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ── Resumo ── */
+.resumo-box {
+    background: #f7f9ff;
+    border: 1px solid #dde;
+    border-radius: 9px;
+    padding: 12px 14px;
+    margin-top: 14px;
+}
+.resumo-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #555; padding: 4px 0; }
+.resumo-row.total { border-top: 1px solid #ccd; margin-top: 6px; padding-top: 10px; font-size: 17px; font-weight: 700; color: var(--gray); }
+.resumo-row.total span:last-child { color: var(--primary); }
+.resumo-row.saldo span:last-child { color: var(--success); font-weight: 600; }
+.resumo-row.devedor span:last-child { color: var(--danger); font-weight: 600; }
+.resumo-row.desconto-row span:last-child { color: var(--danger); }
+
+/* ── Botões ── */
+button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+}
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: var(--success-hover); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: var(--danger-hover); }
+.btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+.btn-full { width: 100%; padding: 13px; font-size: 16px; }
+.btn-enviar { background: var(--primary); color: #fff; }
+.btn-enviar:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(47,127,179,0.35); }
+.btn-enviar:active { transform: translateY(0); }
+.btn-enviar.loading { opacity: 0.75; pointer-events: none; }
+.btn-enviar.loading::after {
+    content: '';
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-left: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.view-orders { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; color: var(--primary); text-decoration: none; font-weight: 700; font-size: 14px; }
+.view-orders:hover { text-decoration: underline; }
+.footer { text-align: center; margin-top: 18px; font-size: 12px; color: #666; }
+
+/* ── Toast ── */
+.toast {
+    position: fixed; bottom: 22px; right: 22px;
+    background: #fff; border-left: 4px solid var(--success);
+    border-radius: 8px; padding: 13px 18px;
+    font-size: 14px; font-weight: 600; color: var(--gray);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.15); z-index: 9999;
+    animation: toastIn 0.3s ease; max-width: 280px;
+}
+.toast.error { border-color: var(--danger); }
+@keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+@media (max-width: 460px) {
+    .form-row { grid-template-columns: 1fr; }
+    .item-grid { grid-template-columns: 1fr 1fr; }
+    .item-grid .form-group:first-child { grid-column: 1 / -1; }
+    .discount-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>Cadastro de Pedido</h1>
-<form id="pedidoForm">
-    <div class="form-group">
-        <label for="seuNome">Vendedor</label>
-        <input type="text" id="seuNome" placeholder="Digite seu nome" required>
-    </div>
-    <div class="form-group">
-        <label for="nomeCliente">Nome do Cliente</label>
-        <input type="text" id="nomeCliente" placeholder="Digite o nome do cliente" required>
-    </div>
-    <div class="form-group">
-        <label for="telefoneCliente">Telefone do Cliente</label>
-        <input type="tel" id="telefoneCliente" placeholder="(XX) XXXXX-XXXX" required>
+
+    <div class="page-title">
+        <span class="emoji">📋</span>
+        <h1>Cadastro de Pedido</h1>
     </div>
 
-    <div id="itensContainer">
-        <div class="item-block">
-            <div class="form-group">
-                <label>Produto</label>
-                <input type="text" placeholder="Digite o produto" required>
+    <form id="pedidoForm">
+
+        <!-- ── Tipo de Pedido ── -->
+        <div class="section">
+            <div class="section-title">🏷️ Tipo de Pedido</div>
+            <div class="tipo-pedido-wrap">
+                <div class="tipo-btn" id="btn-presencial" onclick="selecionarTipo('presencial')">
+                    <span class="tipo-icone">🏪</span>
+                    <span class="tipo-texto">Pedido Presencial</span>
+                    <span class="tipo-badge">Presencial</span>
+                    <span class="tipo-check">✅</span>
+                </div>
+                <div class="tipo-btn" id="btn-online" onclick="selecionarTipo('online')">
+                    <span class="tipo-icone">🌐</span>
+                    <span class="tipo-texto">Pedido On-line</span>
+                    <span class="tipo-badge">On-line</span>
+                    <span class="tipo-check">✅</span>
+                </div>
+            </div>
+            <input type="hidden" id="tipoPedido" value="">
+        </div>
+
+        <!-- ── Dados ── -->
+        <div class="section">
+            <div class="section-title">👤 Dados do Pedido</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="seuNome">Vendedor</label>
+                    <input type="text" id="seuNome" placeholder="Seu nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="nomeCliente">Cliente</label>
+                    <input type="text" id="nomeCliente" placeholder="Nome do cliente" required>
+                </div>
             </div>
             <div class="form-group">
-                <label>Quantidade</label>
-                <input type="number" placeholder="Ex: 10" required>
+                <label for="telefoneCliente">Telefone</label>
+                <input type="tel" id="telefoneCliente" placeholder="(XX) XXXXX-XXXX" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dataPedido">Dt. Pedido</label>
+                    <input type="text" id="dataPedido" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="dataEntrega">Prev. Entrega</label>
+                    <input type="date" id="dataEntrega">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Itens ── -->
+        <div class="section">
+            <div class="section-title">📦 Itens do Pedido</div>
+            <div id="itensContainer"></div>
+            <button type="button" class="btn-success" id="btnAddItem">+ Adicionar Item</button>
+        </div>
+
+        <!-- ── Desconto e Pagamento ── -->
+        <div class="section">
+            <div class="section-title">💳 Desconto &amp; Pagamento</div>
+            <div class="discount-grid">
+                <div class="form-group">
+                    <label for="tipoDesconto">Tipo de Desconto</label>
+                    <select id="tipoDesconto" onchange="onTipoDesconto()">
+                        <option value="none">Sem desconto</option>
+                        <option value="percent">Percentual (%)</option>
+                        <option value="fixed">Valor fixo (R$)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="valorDesconto">Valor do Desconto</label>
+                    <input type="number" id="valorDesconto" min="0" step="0.01" placeholder="0" oninput="calcularResumo()" disabled>
+                </div>
             </div>
             <div class="form-group">
-                <label>Valor Unitário (R$)</label>
-                <input type="number" step="0.01" placeholder="Ex: 9.90" required>
+                <label for="valorRecebido">Valor Recebido (R$)</label>
+                <input type="number" step="0.01" id="valorRecebido" placeholder="0,00" oninput="calcularResumo()" required>
             </div>
-            <button type="button" class="btn-danger btn-excluir">❌ Excluir</button>
+            <div class="resumo-box">
+                <div class="resumo-row">
+                    <span>Subtotal</span>
+                    <span id="rSubtotal">R$ 0,00</span>
+                </div>
+                <div class="resumo-row desconto-row" id="rowDesc" style="display:none">
+                    <span>Desconto</span>
+                    <span id="rDesconto">- R$ 0,00</span>
+                </div>
+                <div class="resumo-row total">
+                    <span>💰 Total</span>
+                    <span id="rTotal">R$ 0,00</span>
+                </div>
+                <div class="resumo-row" id="rowSaldo">
+                    <span id="labelSaldo">Saldo</span>
+                    <span id="rSaldo">R$ 0,00</span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <button type="button" class="btn-success" id="btnAddItem">+ Adicionar Item</button>
-
-    <div class="form-group">
-    <label for="anotacoes">Anotações</label>
-    <textarea id="anotacoes" placeholder="Digite suas observações" rows="4" style="width:100%; padding:10px; border:1px solid var(--border-color); border-radius:8px; font-size:14px;"></textarea>
-</div>
-
-    <div class="dates form-group">
-        <div>
-            <label for="dataPedido">Dt. Pedido</label>
-            <input type="text" id="dataPedido" readonly>
+        <!-- ── Anotações ── -->
+        <div class="section">
+            <div class="section-title">📝 Anotações</div>
+            <div class="form-group">
+                <textarea id="anotacoes" placeholder="Observações, detalhes de entrega, preferências do cliente..."></textarea>
+            </div>
         </div>
-        <div>
-            <label for="dataEntrega">Prev. Entrega</label>
-            <input type="date" id="dataEntrega">
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label>Valor Recebido</label>
-        <input type="number" step="0.01" id="valorRecebido" placeholder="Digite o Valor" required>
-    </div>
+        <button type="submit" class="btn-enviar btn-full" id="btnEnviar">📤 Enviar Pedido</button>
+    </form>
 
-    <div class="form-group total-pedido">
-        💰 Valor Total do Pedido: <span id="valorTotalPedido">0,00</span> R$
-    </div>
-
-    <button type="submit" class="btn-primary">📤 Enviar Pedido</button>
-</form>
-<a href="meus-pedidos.html" class="view-orders">🔍 Ver Meus Pedidos</a>
-<p class="footer">Desenvolvido por <strong>MTScomputadores</strong></p>
+    <a href="meus-pedidos.html" class="view-orders">🔍 Ver Meus Pedidos</a>
+    <p class="footer">Desenvolvido por <strong>MTScomputadores</strong></p>
 </div>
 
 <script>
+// ─── Datas ───────────────────────────────────────────────
 const hoje = new Date();
 const entrega = new Date();
 entrega.setDate(hoje.getDate() + 10);
-const dataPedidoEl = document.getElementById("dataPedido");
-const dataEntregaEl = document.getElementById("dataEntrega");
 
-// Função corrigida: gera YYYY-MM-DD local sem fuso horário
-function formatDateLocal(date){
-    const ano = date.getFullYear();
-    const mes = String(date.getMonth() + 1).padStart(2, "0");
-    const dia = String(date.getDate()).padStart(2, "0");
-    return `${ano}-${mes}-${dia}`;
+function formatDateLocal(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function formatDisplay(d) {
+    return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+document.getElementById("dataPedido").value = formatDisplay(hoje);
+document.getElementById("dataEntrega").value = formatDateLocal(entrega);
+
+// ─── Tipo de Pedido ─────────────────────────────────────
+let tipoPedidoSelecionado = "";
+
+function selecionarTipo(tipo) {
+    tipoPedidoSelecionado = tipo;
+    document.getElementById("tipoPedido").value = tipo;
+
+    const btnP = document.getElementById("btn-presencial");
+    const btnO = document.getElementById("btn-online");
+
+    btnP.classList.remove("ativo-presencial", "ativo-online");
+    btnO.classList.remove("ativo-presencial", "ativo-online");
+
+    if (tipo === "presencial") btnP.classList.add("ativo-presencial");
+    if (tipo === "online")     btnO.classList.add("ativo-online");
 }
 
-// Preencher os campos com datas locais
-dataPedidoEl.value = formatDateLocal(hoje);
-dataEntregaEl.value = formatDateLocal(entrega);
+// ─── Itens ───────────────────────────────────────────────
+let itemCount = 0;
 
-function atualizarValorTotal(){
-    let total = 0;
-    document.querySelectorAll("#itensContainer .item-block").forEach(block=>{
-        const quantidade = parseFloat(block.querySelector("input[placeholder^='Ex:']").value) || 0;
-        const valorUnit = parseFloat(block.querySelector("input[step]").value) || 0;
-        total += quantidade*valorUnit;
-    });
-    document.getElementById("valorTotalPedido").textContent = total.toFixed(2).replace('.',',');
-}
-
-function criarItem(){
-    const item = document.createElement("div");
-    item.classList.add("item-block");
-    item.innerHTML=`
-        <div class="form-group">
-            <label>Produto</label>
-            <input type="text" placeholder="Digite o produto" required>
+function criarItem() {
+    itemCount++;
+    const n = itemCount;
+    const div = document.createElement("div");
+    div.classList.add("item-block");
+    div.innerHTML = `
+        <div class="item-header">
+            <span class="item-num">Item #${n}</span>
+            <div style="display:flex;align-items:center;gap:10px">
+                <span class="item-subtotal" id="sub-${n}">R$ 0,00</span>
+                <button type="button" class="btn-danger btn-sm btn-excluir">❌ Excluir</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Quantidade</label>
-            <input type="number" placeholder="Ex: 10" required>
+        <div class="item-grid">
+            <div class="form-group">
+                <label>Produto</label>
+                <input type="text" class="inp-prod" placeholder="Nome do produto" required>
+            </div>
+            <div class="form-group">
+                <label>Quantidade</label>
+                <input type="number" class="inp-qty" placeholder="0" min="0" required>
+            </div>
+            <div class="form-group">
+                <label>Valor Unit. (R$)</label>
+                <input type="number" class="inp-unit" step="0.01" placeholder="0,00" min="0" required>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Valor Unitário (R$)</label>
-            <input type="number" step="0.01" placeholder="Ex: 9.90" required>
-        </div>
-        <button type="button" class="btn-danger btn-excluir">❌ Excluir</button>
     `;
-    item.querySelector(".btn-excluir").addEventListener("click", ()=>{
-        item.remove();
-        atualizarValorTotal();
-    });
-    return item;
+    div.querySelector(".btn-excluir").addEventListener("click", () => { div.remove(); calcularResumo(); });
+    const qty  = div.querySelector(".inp-qty");
+    const unit = div.querySelector(".inp-unit");
+    [qty, unit].forEach(el => el.addEventListener("input", () => {
+        const s = (parseFloat(qty.value)||0) * (parseFloat(unit.value)||0);
+        document.getElementById(`sub-${n}`).textContent = fmtBRL(s);
+        calcularResumo();
+    }));
+    document.getElementById("itensContainer").appendChild(div);
 }
 
-document.getElementById("btnAddItem").addEventListener("click", ()=>{
-    document.getElementById("itensContainer").appendChild(criarItem());
-});
+document.getElementById("btnAddItem").addEventListener("click", criarItem);
+criarItem();
 
-document.addEventListener("input", e=>{
-    if(e.target.closest("#itensContainer")) atualizarValorTotal();
-});
+// ─── Desconto ────────────────────────────────────────────
+function onTipoDesconto() {
+    const inp  = document.getElementById("valorDesconto");
+    const tipo = document.getElementById("tipoDesconto").value;
+    inp.disabled = tipo === "none";
+    if (tipo === "none") inp.value = "";
+    calcularResumo();
+}
 
-// Envio via API Neon (PostgreSQL)
-document.getElementById("pedidoForm").addEventListener("submit", async function(e){
-    e.preventDefault();
-    const itens=[];
-    document.querySelectorAll("#itensContainer .item-block").forEach(block=>{
-        const produto = block.querySelector("input[placeholder='Digite o produto']").value;
-        const quantidade = parseInt(block.querySelector("input[placeholder^='Ex:']").value)||0;
-        const valorUnit = parseFloat(block.querySelector("input[step]").value)||0;
-        itens.push({produto,quantidade,valorUnit,total:quantidade*valorUnit});
+// ─── Cálculos ────────────────────────────────────────────
+function fmtBRL(v) {
+    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+function calcularSubtotal() {
+    let t = 0;
+    document.querySelectorAll(".item-block").forEach(b => {
+        t += (parseFloat(b.querySelector(".inp-qty")?.value)||0) *
+             (parseFloat(b.querySelector(".inp-unit")?.value)||0);
     });
+    return t;
+}
+function calcularResumo() {
+    const subtotal = calcularSubtotal();
+    const tipo = document.getElementById("tipoDesconto").value;
+    const vd   = parseFloat(document.getElementById("valorDesconto").value) || 0;
+    let desc = 0;
+    if (tipo === "percent") desc = Math.min(subtotal, subtotal * vd / 100);
+    else if (tipo === "fixed") desc = Math.min(subtotal, vd);
+    const total    = subtotal - desc;
+    const recebido = parseFloat(document.getElementById("valorRecebido").value) || 0;
+    const saldo    = recebido - total;
+
+    document.getElementById("rSubtotal").textContent = fmtBRL(subtotal);
+    document.getElementById("rTotal").textContent    = fmtBRL(total);
+
+    const rowDesc = document.getElementById("rowDesc");
+    if (desc > 0) {
+        rowDesc.style.display = "flex";
+        document.getElementById("rDesconto").textContent = `- ${fmtBRL(desc)}`;
+    } else {
+        rowDesc.style.display = "none";
+    }
+
+    const rowSaldo   = document.getElementById("rowSaldo");
+    const labelSaldo = document.getElementById("labelSaldo");
+    const rSaldo     = document.getElementById("rSaldo");
+    rowSaldo.className = "resumo-row";
+    if (saldo >= 0) { rowSaldo.classList.add("saldo");  labelSaldo.textContent = "Troco"; }
+    else            { rowSaldo.classList.add("devedor"); labelSaldo.textContent = "Saldo devedor"; }
+    rSaldo.textContent = fmtBRL(Math.abs(saldo));
+}
+
+// ─── Toast ───────────────────────────────────────────────
+function showToast(msg, type = "success") {
+    const t = document.createElement("div");
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+}
+
+// ─── Reset ───────────────────────────────────────────────
+function resetForm() {
+    document.getElementById("pedidoForm").reset();
+    document.getElementById("dataPedido").value = formatDisplay(hoje);
+    document.getElementById("dataEntrega").value = formatDateLocal(entrega);
+    document.getElementById("itensContainer").innerHTML = "";
+    document.getElementById("valorDesconto").disabled = true;
+    document.getElementById("btn-presencial").classList.remove("ativo-presencial","ativo-online");
+    document.getElementById("btn-online").classList.remove("ativo-presencial","ativo-online");
+    tipoPedidoSelecionado = "";
+    itemCount = 0;
+    criarItem();
+    calcularResumo();
+}
+
+// ─── Envio ───────────────────────────────────────────────
+document.getElementById("pedidoForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    if (!tipoPedidoSelecionado) {
+        showToast("⚠️ Selecione o tipo de pedido!", "error");
+        document.getElementById("btn-presencial").scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
+
+    const subtotal = calcularSubtotal();
+    const tipo = document.getElementById("tipoDesconto").value;
+    const vd   = parseFloat(document.getElementById("valorDesconto").value) || 0;
+    let desc = 0;
+    if (tipo === "percent") desc = Math.min(subtotal, subtotal * vd / 100);
+    else if (tipo === "fixed") desc = Math.min(subtotal, vd);
+    const total = subtotal - desc;
+
+    const itens = [];
+    document.querySelectorAll(".item-block").forEach(b => {
+        const produto    = b.querySelector(".inp-prod").value;
+        const quantidade = parseFloat(b.querySelector(".inp-qty").value) || 0;
+        const valorUnit  = parseFloat(b.querySelector(".inp-unit").value) || 0;
+        itens.push({ produto, quantidade, valorUnit, total: quantidade * valorUnit });
+    });
+
     const pedido = {
-        vendedor: document.getElementById("seuNome").value,
-        nomeCliente: document.getElementById("nomeCliente").value,
+        vendedor:        document.getElementById("seuNome").value,
+        nomeCliente:     document.getElementById("nomeCliente").value,
         telefoneCliente: document.getElementById("telefoneCliente").value,
+        tipoPedido:      tipoPedidoSelecionado,   // "presencial" ou "online"
         itens,
-        anotacoes: document.getElementById("anotacoes").value,
-        dataPedido: formatDateLocal(hoje),
-        dataEntrega: formatDateLocal(entrega),
-        valorTotal: itens.reduce((acc,i)=>acc+i.total,0),
-        valorRecebido: parseFloat(document.getElementById("valorRecebido").value)||0,
-        status:"Aguardando Retorno"
+        anotacoes:       document.getElementById("anotacoes").value,
+        dataPedido:      formatDateLocal(hoje),
+        dataEntrega:     document.getElementById("dataEntrega").value,
+        desconto:        desc,
+        valorTotal:      total,
+        valorRecebido:   parseFloat(document.getElementById("valorRecebido").value) || 0,
+        status:          "Aguardando Retorno"
     };
 
-    try{
-        const res = await fetch("/api/pedidos",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(pedido)
+    const btn = document.getElementById("btnEnviar");
+    btn.classList.add("loading");
+    btn.textContent = "Enviando";
+
+    try {
+        const res  = await fetch("/api/pedidos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(pedido)
         });
         const data = await res.json();
-        if(res.ok){
-            alert("✅ Pedido cadastrado com sucesso!");
-            this.reset();
-            dataPedidoEl.value = formatDateLocal(hoje);
-            dataEntregaEl.value = formatDateLocal(entrega);
-            document.getElementById("itensContainer").innerHTML="";
-            document.getElementById("itensContainer").appendChild(criarItem());
-            atualizarValorTotal();
-        }else{
-            alert("❌ Erro: "+data.error);
+        if (res.ok) {
+            showToast("✅ Pedido cadastrado com sucesso!");
+            resetForm();
+        } else {
+            showToast("❌ Erro: " + data.error, "error");
         }
-    }catch(err){
-        alert("❌ Erro de conexão: "+err.message);
+    } catch(err) {
+        showToast("❌ Erro de conexão: " + err.message, "error");
+    } finally {
+        btn.classList.remove("loading");
+        btn.textContent = "📤 Enviar Pedido";
     }
 });
 </script>

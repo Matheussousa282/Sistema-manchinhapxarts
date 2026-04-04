@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     }
 
     // ── POST /api/usuarios/login — Autenticação
-    if (req.method === 'POST' && req.url.includes('/login')) {
+    if (req.method === 'POST' && req.body?.acao === 'login') {
       const { usuario, senha } = req.body;
       if (!usuario || !senha) {
         return res.status(400).json({ error: 'Usuário e senha obrigatórios.' });

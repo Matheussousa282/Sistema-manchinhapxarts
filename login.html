@@ -238,11 +238,15 @@ document.getElementById('loginForm').addEventListener('submit', async(e)=>{
   erro.style.display = 'none';
 
   try{
-    const res  = await fetch('https://sistema-manchinhapxarts.vercel.app/api/usuarios/login',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({usuario, senha})
-    });
+    const res  = await fetch('/api/usuarios', {
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({
+    acao: 'login',
+    usuario,
+    senha
+  })
+});
     const data = await res.json();
 
     if(res.ok && data.ok){

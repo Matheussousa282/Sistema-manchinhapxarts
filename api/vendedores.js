@@ -1,8 +1,8 @@
 // ================================================================
 //  api/vendedores.js
 //
-//  Vendedores:
-//    GET    /api/vendedores            → lista ativos
+//  Vendedores cadastrados (para o select do index.html):
+//    GET    /api/vendedores            → lista vendedores ativos
 //    POST   /api/vendedores            → cadastrar  [admin]
 //    PUT    /api/vendedores            → ativar/desativar [admin]
 //    DELETE /api/vendedores?id=X       → remover    [admin]
@@ -10,7 +10,11 @@
 //  Metas:
 //    GET    /api/vendedores?metas=1&mes=M&ano=A   → metas do mês
 //    POST   /api/vendedores?metas=1               → salvar meta [admin]
-//    GET    /api/vendedores?ranking=1&mes=M&ano=A → ranking com progresso
+//
+//  Ranking — NÃO depende da tabela vendedores:
+//    GET    /api/vendedores?ranking=1&mes=M&ano=A
+//           → agrupa direto pela coluna pedidos.vendedor
+//           → combina com metas do mesmo mês
 // ================================================================
 
 import pkg from 'pg';
@@ -70,23 +74,32 @@ export default async function handler(req, res) {
     const mesN = parseInt(mes) || new Date().getMonth() + 1;
     const anoN = parseInt(ano) || new Date().getFullYear();
 
-    // ── GET /api/vendedores?ranking=1 — progresso vs meta ──
+    // ══════════════════════════════════════════════════════
+    //  GET /api/vendedores?ranking=1
+    //  Agrupa pela coluna pedidos.vendedor diretamente —
+    //  sem depender da tabela vendedores.
+    // ══════════════════════════════════════════════════════
     if (req.method === 'GET' && ranking) {
-      // Soma vendas por vendedor no mês/ano
+
+      // 1. Vendas agrupadas por vendedor no mês/ano
       const vendasRes = await client.query(`
         SELECT
           vendedor,
-          COUNT(*)::int            AS qtd_pedidos,
-          SUM(valor_total)         AS total_vendas,
-          SUM(valor_recebido)      AS total_recebido
+          COUNT(*)::int             AS qtd_pedidos,
+          SUM(valor_total)          AS total_vendas,
+          SUM(valor_recebido)       AS total_recebido
         FROM pedidos
-        WHERE EXTRACT(MONTH FROM data_pedido) = $1
+        WHERE
+          vendedor IS NOT NULL
+          AND vendedor <> ''
+          AND EXTRACT(MONTH FROM data_pedido) = $1
           AND EXTRACT(YEAR  FROM data_pedido) = $2
           AND status != 'Cancelado'
         GROUP BY vendedor
+        ORDER BY total_vendas DESC
       `, [mesN, anoN]);
 
-      // Busca metas do mês
+      // 2. Metas do mês
       const metasRes = await client.query(`
         SELECT vendedor, valor_meta FROM metas
         WHERE mes = $1 AND ano = $2
@@ -95,23 +108,18 @@ export default async function handler(req, res) {
       const metaMap = {};
       metasRes.rows.forEach(m => { metaMap[m.vendedor] = Number(m.valor_meta); });
 
-      // Lista todos os vendedores ativos
-      const vendRes = await client.query(
-        `SELECT nome FROM vendedores WHERE ativo = true ORDER BY nome`
-      );
-
-      const resultado = vendRes.rows.map(v => {
-        const venda = vendasRes.rows.find(x => x.vendedor === v.nome) || {};
-        const meta  = metaMap[v.nome] || 0;
-        const total = Number(venda.total_vendas || 0);
-        const pct   = meta > 0 ? Math.min(100, (total / meta) * 100) : 0;
+      // 3. Combina vendas + metas
+      const resultado = vendasRes.rows.map(v => {
+        const meta  = metaMap[v.vendedor] || 0;
+        const total = Number(v.total_vendas || 0);
+        const pct   = meta > 0 ? Math.min(100, (total / meta) * 100) : null;
         return {
-          vendedor    : v.nome,
-          qtd_pedidos : venda.qtd_pedidos || 0,
+          vendedor    : v.vendedor,
+          qtd_pedidos : v.qtd_pedidos,
           total_vendas: total,
           meta        : meta,
-          percentual  : Math.round(pct * 10) / 10,
-          falta       : Math.max(0, meta - total),
+          percentual  : pct !== null ? Math.round(pct * 10) / 10 : null,
+          falta       : meta > 0 ? Math.max(0, meta - total) : null,
         };
       });
 
@@ -126,7 +134,7 @@ export default async function handler(req, res) {
       return res.status(200).json(result.rows);
     }
 
-    // ── GET /api/vendedores — lista vendedores ativos ───────
+    // ── GET /api/vendedores — lista cadastrados ─────────────
     if (req.method === 'GET') {
       const result = await client.query(
         `SELECT * FROM vendedores ORDER BY ativo DESC, nome ASC`
@@ -149,47 +157,34 @@ export default async function handler(req, res) {
         ON CONFLICT (vendedor, mes, ano)
         DO UPDATE SET valor_meta = EXCLUDED.valor_meta
       `, [vendedor, parseInt(m) || mesN, parseInt(a) || anoN, valor_meta]);
-
       return res.status(201).json({ message: 'Meta salva com sucesso!' });
     }
 
-    // ── POST /api/vendedores — cadastrar vendedor ────────────
+    // ── POST /api/vendedores — cadastrar ────────────────────
     if (req.method === 'POST') {
       if (session.nivel !== 'admin') {
         return res.status(403).json({ error: 'Apenas administradores podem cadastrar vendedores.' });
       }
       const { nome } = req.body || {};
-      if (!nome || !nome.trim()) {
-        return res.status(400).json({ error: 'Nome obrigatório.' });
-      }
-      const existe = await client.query(
-        `SELECT id FROM vendedores WHERE nome = $1`, [nome.trim()]
-      );
-      if (existe.rows.length) {
-        return res.status(409).json({ error: 'Vendedor já cadastrado.' });
-      }
-      await client.query(
-        `INSERT INTO vendedores (nome) VALUES ($1)`, [nome.trim()]
-      );
+      if (!nome?.trim()) return res.status(400).json({ error: 'Nome obrigatório.' });
+      const existe = await client.query(`SELECT id FROM vendedores WHERE nome = $1`, [nome.trim()]);
+      if (existe.rows.length) return res.status(409).json({ error: 'Vendedor já cadastrado.' });
+      await client.query(`INSERT INTO vendedores (nome) VALUES ($1)`, [nome.trim()]);
       return res.status(201).json({ message: 'Vendedor cadastrado com sucesso!' });
     }
 
-    // ── PUT /api/vendedores — ativar/desativar ───────────────
+    // ── PUT — ativar/desativar ───────────────────────────────
     if (req.method === 'PUT') {
-      if (session.nivel !== 'admin') {
-        return res.status(403).json({ error: 'Acesso negado.' });
-      }
+      if (session.nivel !== 'admin') return res.status(403).json({ error: 'Acesso negado.' });
       const { id: uid, ativo } = req.body || {};
       if (!uid) return res.status(400).json({ error: 'ID obrigatório.' });
       await client.query(`UPDATE vendedores SET ativo = $1 WHERE id = $2`, [ativo, uid]);
       return res.status(200).json({ message: 'Atualizado!' });
     }
 
-    // ── DELETE /api/vendedores?id=X ─────────────────────────
+    // ── DELETE ──────────────────────────────────────────────
     if (req.method === 'DELETE') {
-      if (session.nivel !== 'admin') {
-        return res.status(403).json({ error: 'Acesso negado.' });
-      }
+      if (session.nivel !== 'admin') return res.status(403).json({ error: 'Acesso negado.' });
       if (!id) return res.status(400).json({ error: 'ID obrigatório.' });
       await client.query(`DELETE FROM vendedores WHERE id = $1`, [id]);
       return res.status(200).json({ message: 'Vendedor removido!' });

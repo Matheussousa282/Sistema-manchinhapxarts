@@ -5,19 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎯 Metas de Vendas</title>
 
-<!-- ✅ PROTEÇÃO — apenas admin -->
 <script>
-(async function() {
-  try {
-    const res  = await fetch('/api/me', { credentials: 'include' });
-    const data = await res.json();
-    if (!res.ok || !data.ok)      { window.location.replace('login.html');  return; }
-    if (data.nivel !== 'admin')   { window.location.replace('painel.html'); return; }
-    sessionStorage.setItem('isLoggedIn',    'true');
-    sessionStorage.setItem('usuarioLogado', data.usuario);
-    sessionStorage.setItem('nivelAcesso',   data.nivel);
-  } catch { window.location.replace('login.html'); }
-})();
+if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+  window.location.replace('login.html');
+} else if (sessionStorage.getItem('nivelAcesso') !== 'admin') {
+  window.location.replace('painel.html');
+}
 </script>
 
 <style>

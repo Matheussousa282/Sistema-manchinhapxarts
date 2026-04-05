@@ -4,178 +4,403 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mpx Arts — Painel</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-
-<script>
-if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-  window.location.replace('login.html');
-}
-</script>
-
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:#0f0f1a;display:flex;height:100vh;overflow:hidden;}
+:root {
+  --accent: #f5c842;
+  --accent-dim: rgba(245,200,66,0.12);
+  --accent-glow: rgba(245,200,66,0.25);
+  --bg: #0c0c10;
+  --surface: #13131a;
+  --surface2: #1a1a24;
+  --surface3: #22222f;
+  --border: rgba(255,255,255,0.07);
+  --border-accent: rgba(245,200,66,0.2);
+  --text: #f0f0f4;
+  --text-muted: #6b6b80;
+  --text-dim: #3a3a4a;
+  --primary: #4f9eff;
+  --success: #3dd68c;
+  --danger: #ff5c5c;
+  --font: 'Outfit', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --sidebar-w: 240px;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
 
-.sidebar{width:230px;min-width:230px;background:#13131f;border-right:1px solid rgba(255,220,0,0.08);display:flex;flex-direction:column;position:relative;z-index:10;}
-.sidebar-header{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:12px;}
-.sidebar-logo{width:40px;height:40px;background:linear-gradient(135deg,#ffe600,#ffb300);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#000;flex-shrink:0;box-shadow:0 0 14px rgba(255,200,0,0.25);}
-.sidebar-brand .name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#ffe600;white-space:nowrap;}
-.sidebar-brand .sub{font-size:10px;color:#444;letter-spacing:1px;text-transform:uppercase;}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.sidebar-menu{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;}
-.menu-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#333;padding:10px 10px 4px;}
-.menu-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;cursor:pointer;color:#888;font-size:14px;font-weight:500;transition:all 0.2s;border:none;background:transparent;width:100%;text-align:left;white-space:nowrap;}
-.menu-item .icon{font-size:17px;flex-shrink:0;width:22px;text-align:center;}
-.menu-item:hover{background:rgba(255,220,0,0.06);color:#ddd;}
-.menu-item.ativo{background:rgba(255,220,0,0.1);color:#ffe600;border-left:3px solid #ffe600;padding-left:9px;}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  color: var(--text);
+}
 
-.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px;}
-.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,#2f7fb3,#4aa3df);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
-.user-info{flex:1;overflow:hidden;}
-.user-info .uname{font-size:13px;font-weight:600;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.user-info .ulevel{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.8px;}
-.btn-sair{background:rgba(220,53,69,0.12);border:1px solid rgba(220,53,69,0.2);color:#ff6b78;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
-.btn-sair:hover{background:rgba(220,53,69,0.25);border-color:#dc3545;}
+/* ── SIDEBAR ─────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
 
-.sidebar-footer{padding:10px 16px 14px;font-size:10px;color:#2a2a3a;text-align:center;letter-spacing:0.5px;}
-.sidebar-footer a{color:#2f7fb3;text-decoration:none;font-weight:600;}
+/* Linha decorativa topo */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
 
-.main{flex:1;background:#f4f7fb;overflow:hidden;display:flex;flex-direction:column;}
-.main-topbar{background:#fff;border-bottom:1px solid #e8ecf0;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.main-topbar .page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#1e1e2f;display:flex;align-items:center;gap:8px;}
-.main-topbar .breadcrumb{font-size:12px;color:#aaa;}
-.main-content{flex:1;overflow:hidden;}
-.main-content iframe{width:100%;height:100%;border:none;display:block;}
+.sidebar-header {
+  padding: 22px 18px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-.boas-vindas{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:20px;padding:40px;text-align:center;}
-.bv-icon{font-size:64px;}
-.bv-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#1e1e2f;}
-.bv-sub{font-size:15px;color:#888;max-width:400px;line-height:1.6;}
-.bv-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:10px;}
-.bv-card{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.07);display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:all 0.2s;border:2px solid transparent;min-width:140px;}
-.bv-card:hover{border-color:#2f7fb3;transform:translateY(-3px);box-shadow:0 6px 20px rgba(47,127,179,0.15);}
-.bv-card .bc-icon{font-size:28px;}
-.bv-card .bc-label{font-size:13px;font-weight:600;color:#333;}
+.logo-mark {
+  width: 38px; height: 38px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px; color: #000;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+.logo-text {
+  display: flex; flex-direction: column;
+}
+.logo-text .brand { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+.logo-text .tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 1.2px; text-transform: uppercase; margin-top: 1px; }
+
+/* Menu */
+.sidebar-nav { flex: 1; padding: 14px 10px; overflow-y: auto; }
+.nav-section { margin-bottom: 6px; }
+.nav-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 1.8px;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 10px 10px 5px;
+  display: block;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13.5px; font-weight: 500;
+  transition: all 0.18s ease;
+  border: none; background: transparent;
+  width: 100%; text-align: left;
+  white-space: nowrap;
+  position: relative;
+  letter-spacing: -0.1px;
+}
+.nav-item .nav-icon {
+  font-size: 16px; width: 20px; text-align: center;
+  flex-shrink: 0; opacity: 0.7;
+  transition: opacity 0.18s;
+}
+.nav-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+}
+.nav-item:hover .nav-icon { opacity: 1; }
+.nav-item.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 600;
+}
+.nav-item.active .nav-icon { opacity: 1; }
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 60%;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+}
+
+/* User footer */
+.sidebar-footer {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.user-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+.user-av {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #7cb9ff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.user-info { flex: 1; min-width: 0; }
+.user-info .u-name {
+  font-size: 12.5px; font-weight: 600; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-info .u-role {
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-top: 1px;
+}
+.btn-exit {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 16px;
+  padding: 4px; border-radius: 6px;
+  transition: color 0.15s;
+}
+.btn-exit:hover { color: var(--danger); }
+
+.sidebar-credit {
+  text-align: center; font-size: 10px; color: var(--text-dim);
+  padding: 8px 14px 4px;
+  letter-spacing: 0.3px;
+}
+.sidebar-credit a { color: var(--primary); text-decoration: none; }
+
+/* ── MAIN ─────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f0f2f7;
+  overflow: hidden;
+}
+
+.main-topbar {
+  background: #fff;
+  border-bottom: 1px solid #e4e7ef;
+  padding: 0 28px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 8px; }
+.topbar-crumb {
+  font-size: 13px; font-weight: 600; color: #1a1a2e;
+  display: flex; align-items: center; gap: 6px;
+}
+.topbar-crumb .sep { color: #b0b8cc; font-weight: 400; }
+.topbar-crumb .current { color: #4f9eff; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.time-badge {
+  font-family: var(--mono);
+  font-size: 11px; color: #8a93aa;
+  background: #f5f7fb;
+  border: 1px solid #e4e7ef;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.main-content { flex: 1; overflow: hidden; }
+.main-content iframe { width: 100%; height: 100%; border: none; display: block; }
+
+/* Welcome screen */
+.welcome {
+  height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 28px; padding: 40px;
+  background: radial-gradient(ellipse at 60% 40%, rgba(79,158,255,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 30% 70%, rgba(245,200,66,0.04) 0%, transparent 50%),
+              #f0f2f7;
+}
+.welcome-icon { font-size: 52px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1)); }
+.welcome-text { text-align: center; }
+.welcome-text h1 {
+  font-size: 26px; font-weight: 700; color: #1a1a2e;
+  letter-spacing: -0.5px; margin-bottom: 8px;
+}
+.welcome-text p { font-size: 14px; color: #7a84a0; max-width: 360px; line-height: 1.6; }
+
+.quick-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; max-width: 680px; width: 100%;
+}
+.quick-card {
+  background: #fff;
+  border: 1px solid #e4e7ef;
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center;
+}
+.quick-card:hover {
+  border-color: #4f9eff;
+  box-shadow: 0 6px 20px rgba(79,158,255,0.12);
+  transform: translateY(-3px);
+}
+.quick-card .qc-icon { font-size: 26px; }
+.quick-card .qc-label { font-size: 12px; font-weight: 600; color: #3a4060; }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
   <div class="sidebar-header">
-    <div class="sidebar-logo">MP</div>
-    <div class="sidebar-brand">
-      <span class="name">Mpx Arts</span>
-      <span class="sub">Sistema</span>
+    <div class="logo-mark">MP</div>
+    <div class="logo-text">
+      <span class="brand">Mpx Arts</span>
+      <span class="tagline">Sistema</span>
     </div>
   </div>
 
-  <div class="sidebar-menu">
-    <div class="menu-label">Principal</div>
-    <button class="menu-item" id="menu-dashboard"   onclick="abrirPagina('dashboard','📊 Dashboard','Dashboard')">
-      <span class="icon">📊</span> Dashboard
-    </button>
-    <button class="menu-item" id="menu-pedidos"     onclick="abrirPagina('pedidos','📦 Pedidos','Pedidos')">
-      <span class="icon">📦</span> Pedidos
-    </button>
-    <button class="menu-item" id="menu-novo"        onclick="abrirPagina('novo','📋 Novo Pedido','Novo Pedido')">
-      <span class="icon">📋</span> Novo Pedido
-    </button>
-    <button class="menu-item" id="menu-recebimento" onclick="abrirPagina('recebimento','💳 Recebimento','Recebimento')">
-      <span class="icon">💳</span> Recebimento
-    </button>
-
-    <!-- Só admin vê estas opções -->
-    <div class="menu-label admin-only" style="display:none">Configurações</div>
-    <button class="menu-item admin-only" id="menu-usuarios"      style="display:none" onclick="abrirPagina('usuarios','👥 Usuários','Usuários')">
-      <span class="icon">👥</span> Usuários
-    </button>
-    <button class="menu-item admin-only" id="menu-metas"         style="display:none" onclick="abrirPagina('metas','🎯 Metas','Metas')">
-      <span class="icon">🎯</span> Metas
-    </button>
-    <button class="menu-item admin-only" id="menu-configuracoes" style="display:none" onclick="abrirPagina('configuracoes','⚙️ Configurações','Configurações')">
-      <span class="icon">⚙️</span> Configurações
-    </button>
-  </div>
-
-  <div class="sidebar-user">
-    <div class="user-avatar" id="userAvatar">?</div>
-    <div class="user-info">
-      <div class="uname"  id="userName">—</div>
-      <div class="ulevel" id="userLevel">—</div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <span class="nav-label">Principal</span>
+      <button class="nav-item" id="nav-dashboard" onclick="ir('dashboard','📊 Dashboard','Dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+      <button class="nav-item" id="nav-pedidos" onclick="ir('pedidos','📦 Pedidos','Pedidos')">
+        <span class="nav-icon">📦</span> Pedidos
+      </button>
+      <button class="nav-item" id="nav-novo" onclick="ir('novo','📋 Novo Pedido','Novo Pedido')">
+        <span class="nav-icon">📋</span> Novo Pedido
+      </button>
+      <button class="nav-item" id="nav-recebimento" onclick="ir('recebimento','💳 Recebimento','Recebimento')">
+        <span class="nav-icon">💳</span> Recebimento
+      </button>
     </div>
-    <button class="btn-sair" onclick="sair()">Sair</button>
-  </div>
+
+    <div class="nav-section admin-block" style="display:none">
+      <span class="nav-label">Administração</span>
+      <button class="nav-item" id="nav-usuarios" onclick="ir('usuarios','👥 Usuários','Usuários')">
+        <span class="nav-icon">👥</span> Usuários
+      </button>
+      <button class="nav-item" id="nav-configuracoes" onclick="ir('configuracoes','⚙️ Configurações','Configurações')">
+        <span class="nav-icon">⚙️</span> Configurações
+      </button>
+    </div>
+  </nav>
+
   <div class="sidebar-footer">
-    Desenvolvido por <a href="https://instagram.com/mts_computadores" target="_blank">MTScomputadores</a>
+    <div class="user-row">
+      <div class="user-av" id="userAv">?</div>
+      <div class="user-info">
+        <div class="u-name" id="userName">—</div>
+        <div class="u-role" id="userRole">—</div>
+      </div>
+      <button class="btn-exit" onclick="sair()" title="Sair">⏻</button>
+    </div>
+  </div>
+  <div class="sidebar-credit">
+    por <a href="https://instagram.com/mts_computadores" target="_blank">MTScomputadores</a>
   </div>
 </div>
 
 <div class="main">
   <div class="main-topbar">
-    <span class="page-title"   id="pageTitle">🏠 Início</span>
-    <span class="breadcrumb"   id="pageBreadcrumb">Mpx Arts › Início</span>
+    <div class="topbar-left">
+      <div class="topbar-crumb" id="topbarCrumb">
+        <span>Mpx Arts</span>
+        <span class="sep">›</span>
+        <span class="current" id="topbarPage">Início</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="time-badge" id="timeBadge">--:--</div>
+    </div>
   </div>
-  <div class="main-content" id="conteudo">
-    <div class="boas-vindas">
-      <div class="bv-icon">👋</div>
-      <div class="bv-title">Bem-vindo, <span id="nomeBoasVindas">—</span>!</div>
-      <div class="bv-sub">Selecione uma opção no menu lateral para começar.</div>
-      <div class="bv-cards">
-        <div class="bv-card" onclick="abrirPagina('dashboard','📊 Dashboard','Dashboard')"><span class="bc-icon">📊</span><span class="bc-label">Dashboard</span></div>
-        <div class="bv-card" onclick="abrirPagina('pedidos','📦 Pedidos','Pedidos')"><span class="bc-icon">📦</span><span class="bc-label">Pedidos</span></div>
-        <div class="bv-card" onclick="abrirPagina('novo','📋 Novo Pedido','Novo Pedido')"><span class="bc-icon">📋</span><span class="bc-label">Novo Pedido</span></div>
-        <div class="bv-card" onclick="abrirPagina('recebimento','💳 Recebimento','Recebimento')"><span class="bc-icon">💳</span><span class="bc-label">Recebimento</span></div>
+
+  <div class="main-content" id="mainContent">
+    <div class="welcome">
+      <div class="welcome-icon">👋</div>
+      <div class="welcome-text">
+        <h1>Bom dia, <span id="welcomeName">—</span>!</h1>
+        <p>Selecione uma opção no menu para começar a trabalhar no sistema.</p>
+      </div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="ir('dashboard','📊 Dashboard','Dashboard')">
+          <span class="qc-icon">📊</span><span class="qc-label">Dashboard</span>
+        </div>
+        <div class="quick-card" onclick="ir('pedidos','📦 Pedidos','Pedidos')">
+          <span class="qc-icon">📦</span><span class="qc-label">Pedidos</span>
+        </div>
+        <div class="quick-card" onclick="ir('novo','📋 Novo Pedido','Novo Pedido')">
+          <span class="qc-icon">📋</span><span class="qc-label">Novo Pedido</span>
+        </div>
+        <div class="quick-card" onclick="ir('recebimento','💳 Recebimento','Recebimento')">
+          <span class="qc-icon">💳</span><span class="qc-label">Recebimento</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+if(sessionStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'login.html';
+
+const usuario = sessionStorage.getItem('usuarioLogado') || 'Usuário';
+const nivel   = sessionStorage.getItem('nivelAcesso')   || 'vendedor';
+
+document.getElementById('userName').textContent  = usuario;
+document.getElementById('userRole').textContent  = nivel;
+document.getElementById('userAv').textContent    = usuario.charAt(0).toUpperCase();
+document.getElementById('welcomeName').textContent = usuario.split(' ')[0];
+
+if(nivel === 'admin') {
+  document.querySelectorAll('.admin-block').forEach(el => el.style.display = '');
+}
+
+// Relógio
+function tick() {
+  document.getElementById('timeBadge').textContent =
+    new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+}
+tick(); setInterval(tick, 1000);
+
 const mapa = {
-  dashboard    : 'dashboard.html',
-  pedidos      : 'meus-pedidos.html',
-  novo         : 'index.html',
-  recebimento  : 'recebimento.html',
-  usuarios     : 'gerenciarusuario.html',
-  metas        : 'metas.html',
+  dashboard:     'dashboard.html',
+  pedidos:       'meus-pedidos.html',
+  novo:          'index.html',
+  recebimento:   'recebimento.html',
+  usuarios:      'gerenciarusuario.html',
   configuracoes: 'configuracoes.html',
 };
 
-// Aguarda a sessão ser gravada pelo bloco de proteção no <head>
-// e preenche a UI assim que o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', () => {
-  const usuario = sessionStorage.getItem('usuarioLogado') || '—';
-  const nivel   = sessionStorage.getItem('nivelAcesso')   || 'vendedor';
-
-  document.getElementById('userName').textContent        = usuario;
-  document.getElementById('userLevel').textContent       = nivel;
-  document.getElementById('userAvatar').textContent      = usuario.charAt(0).toUpperCase();
-  document.getElementById('nomeBoasVindas').textContent  = usuario;
-
-  if (nivel === 'admin') {
-    document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
-  }
-});
-
-function abrirPagina(pagina, titulo, breadcrumb) {
-  document.getElementById('pageTitle').textContent      = titulo || pagina;
-  document.getElementById('pageBreadcrumb').textContent = `Mpx Arts › ${breadcrumb || pagina}`;
-  document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('ativo'));
-  const el = document.getElementById('menu-' + pagina);
-  if (el) el.classList.add('ativo');
-  if (mapa[pagina]) {
-    document.getElementById('conteudo').innerHTML = `<iframe src="${mapa[pagina]}"></iframe>`;
+function ir(page, title, crumb) {
+  document.getElementById('topbarPage').textContent = crumb;
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('nav-' + page);
+  if(el) el.classList.add('active');
+  if(mapa[page]) {
+    document.getElementById('mainContent').innerHTML = `<iframe src="${mapa[page]}"></iframe>`;
   }
 }
 
-// ✅ Logout
-async function sair() {
-  try {
-    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-  } catch {}
-  sessionStorage.clear();
-  window.location.replace('login.html');
-}
+function sair() { sessionStorage.clear(); window.location.href = 'login.html'; }
+
+// Saudação por horário
+const h = new Date().getHours();
+const saud = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+document.querySelector('.welcome-text h1').innerHTML = `${saud}, <span>${usuario.split(' ')[0]}</span>!`;
 </script>
 </body>
 </html>

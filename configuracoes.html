@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ Configurações</title>
+<style>
+:root{--primary:#2f7fb3;--primary-h:#25658d;--success:#28a745;--danger:#dc3545;--gray:#333;--border:#dde3ee;--light:#f4f7fb;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI",Arial,sans-serif;background:var(--light);min-height:100vh;padding:28px 16px 60px;}
+.page-header{max-width:900px;margin:0 auto 24px;}
+.page-header h1{font-size:22px;font-weight:800;color:var(--primary);}
+.page-header p{font-size:13px;color:#888;margin-top:4px;}
+
+.tabs{display:flex;gap:4px;max-width:900px;margin:0 auto 20px;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid var(--border);}
+.tab-btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#888;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab-btn:hover{background:#f0f4f8;color:var(--gray);}
+.tab-btn.ativo{background:var(--primary);color:#fff;}
+
+.tab-content{display:none;max-width:900px;margin:0 auto;}
+.tab-content.ativo{display:block;}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.grid-2{grid-template-columns:1fr;}}
+
+.box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid var(--border);margin-bottom:16px;}
+.box-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+.box-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* Tags lista */
+.tags-list{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;margin-bottom:14px;padding:10px;background:#f7f9ff;border-radius:8px;border:1px solid var(--border);}
+.tag-item{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#fff;border:1.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:600;color:var(--gray);}
+.tag-item .del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;line-height:1;padding:0 0 0 2px;transition:color 0.2s;}
+.tag-item .del:hover{color:var(--danger);}
+.tag-vazio{color:#bbb;font-size:13px;font-style:italic;align-self:center;}
+
+.add-row{display:flex;gap:8px;}
+.add-row input{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;transition:border-color 0.2s;}
+.add-row input:focus{border-color:var(--primary);}
+.btn-add{padding:9px 18px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:background 0.2s;white-space:nowrap;}
+.btn-add:hover{background:var(--primary-h);}
+
+/* Permissões */
+.user-perm-card{background:#f7f9ff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.upc-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.upc-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#4aa3df);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0;}
+.upc-info .uname{font-size:14px;font-weight:700;color:var(--gray);}
+.upc-info .ulevel{font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:0.6px;}
+.perms-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.perm-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#fff;border-radius:8px;border:1px solid var(--border);}
+.perm-label{font-size:13px;font-weight:600;color:var(--gray);}
+.perm-sub{font-size:11px;color:#aaa;}
+/* Toggle */
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:20px;cursor:pointer;transition:background 0.2s;}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.toggle input:checked+.toggle-slider{background:var(--success);}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);}
+
+.btn-salvar-perms{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:12px;}
+.btn-salvar-perms:hover{background:#218838;}
+
+.toast{position:fixed;bottom:22px;right:22px;background:#fff;border-left:4px solid var(--success);border-radius:8px;padding:13px 18px;font-size:14px;font-weight:600;color:var(--gray);box-shadow:0 6px 24px rgba(0,0,0,0.15);z-index:9999;animation:toastIn 0.3s ease;max-width:280px;}
+.toast.error{border-color:var(--danger);}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>⚙️ Configurações</h1>
+  <p>Gerencie formas de pagamento, bandeiras de cartão e permissões de acesso por usuário.</p>
+</div>
+
+<!-- Abas -->
+<div class="tabs">
+  <button class="tab-btn ativo" onclick="mudarTab('pagamento',this)">💳 Formas de Pagamento</button>
+  <button class="tab-btn" onclick="mudarTab('bandeiras',this)">🏦 Bandeiras / Operadoras</button>
+  <button class="tab-btn" onclick="mudarTab('permissoes',this)">🔐 Permissões de Acesso</button>
+</div>
+
+<!-- Aba: Formas de Pagamento -->
+<div class="tab-content ativo" id="tab-pagamento">
+  <div class="grid-2">
+    <div class="box">
+      <div class="box-title">Formas Padrão (sempre ativas)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span class="tag-item" style="border-color:#28a745;color:#155724;">💵 Dinheiro</span>
+        <span class="tag-item" style="border-color:#2f7fb3;color:#004085;">📲 Pix</span>
+        <span class="tag-item" style="border-color:#6f42c1;color:#4a148c;">💳 Cartão</span>
+      </div>
+    </div>
+    <div class="box">
+      <div class="box-title">Formas Personalizadas</div>
+      <div class="tags-list" id="listaFormas">
+        <span class="tag-vazio">Nenhuma forma adicionada.</span>
+      </div>
+      <div class="add-row">
+        <input type="text" id="novaForma" placeholder="Ex: Boleto, Cheque, Financiamento..." maxlength="40">
+        <button class="btn-add" onclick="adicionarForma()">+ Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Aba: Bandeiras -->
+<div class="tab-content" id="tab-bandeiras">
+  <div class="grid-2">
+    <div class="box">
+      <div class="box-title">Bandeiras Padrão (sempre ativas)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span class="tag-item">Visa</span>
+        <span class="tag-item">Master</span>
+        <span class="tag-item">Elo</span>
+        <span class="tag-item">Amex</span>
+        <span class="tag-item">Hipercard</span>
+      </div>
+    </div>
+    <div class="box">
+      <div class="box-title">Bandeiras / Operadoras Personalizadas</div>
+      <div class="tags-list" id="listaBandeiras">
+        <span class="tag-vazio">Nenhuma bandeira adicionada.</span>
+      </div>
+      <div class="add-row">
+        <input type="text" id="novaBandeira" placeholder="Ex: Sodexo, VR, Ticket, Cabal..." maxlength="40">
+        <button class="btn-add" onclick="adicionarBandeira()">+ Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Aba: Permissões -->
+<div class="tab-content" id="tab-permissoes">
+  <div class="box" style="margin-bottom:12px;background:#fff3cd;border-color:#ffc107;">
+    <p style="font-size:13px;color:#856404;">⚠️ Admins sempre têm acesso total. As permissões abaixo se aplicam apenas aos usuários com nível <strong>vendedor</strong>.</p>
+  </div>
+  <div id="listaPermissoes">
+    <p style="text-align:center;color:#bbb;padding:20px;font-size:13px;">Carregando usuários...</p>
+  </div>
+</div>
+
+<script>
+function showToast(msg,type='success'){const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+// ── Abas ───────────────────────────────────────────────────
+function mudarTab(id,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('ativo'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('ativo'));
+  document.getElementById('tab-'+id).classList.add('ativo');
+  el.classList.add('ativo');
+  if(id==='permissoes')carregarPermissoes();
+}
+
+// ── Formas de Pagamento ────────────────────────────────────
+function getFormas(){return JSON.parse(localStorage.getItem('config_formas')||'[]');}
+function salvarFormas(list){localStorage.setItem('config_formas',JSON.stringify(list));}
+
+function renderFormas(){
+  const list=getFormas();
+  const cont=document.getElementById('listaFormas');
+  if(!list.length){cont.innerHTML='<span class="tag-vazio">Nenhuma forma adicionada.</span>';return;}
+  cont.innerHTML=list.map((f,i)=>`<span class="tag-item">💰 ${f}<button class="del" onclick="removerForma(${i})">×</button></span>`).join('');
+}
+
+function adicionarForma(){
+  const inp=document.getElementById('novaForma');
+  const val=inp.value.trim();
+  if(!val){showToast('Digite o nome da forma!','error');return;}
+  const list=getFormas();
+  if(list.includes(val)){showToast('Forma já cadastrada!','error');return;}
+  list.push(val);salvarFormas(list);inp.value='';renderFormas();
+  showToast('✅ Forma adicionada!');
+}
+
+function removerForma(idx){
+  const list=getFormas();list.splice(idx,1);salvarFormas(list);renderFormas();
+}
+
+// ── Bandeiras ──────────────────────────────────────────────
+function getBandeiras(){return JSON.parse(localStorage.getItem('config_bandeiras')||'[]');}
+function salvarBandeiras(list){localStorage.setItem('config_bandeiras',JSON.stringify(list));}
+
+function renderBandeiras(){
+  const list=getBandeiras();
+  const cont=document.getElementById('listaBandeiras');
+  if(!list.length){cont.innerHTML='<span class="tag-vazio">Nenhuma bandeira adicionada.</span>';return;}
+  cont.innerHTML=list.map((b,i)=>`<span class="tag-item">🏦 ${b}<button class="del" onclick="removerBandeira(${i})">×</button></span>`).join('');
+}
+
+function adicionarBandeira(){
+  const inp=document.getElementById('novaBandeira');
+  const val=inp.value.trim();
+  if(!val){showToast('Digite o nome da bandeira!','error');return;}
+  const list=getBandeiras();
+  if(list.includes(val)){showToast('Bandeira já cadastrada!','error');return;}
+  list.push(val);salvarBandeiras(list);inp.value='';renderBandeiras();
+  showToast('✅ Bandeira adicionada!');
+}
+
+function removerBandeira(idx){
+  const list=getBandeiras();list.splice(idx,1);salvarBandeiras(list);renderBandeiras();
+}
+
+// ── Permissões ─────────────────────────────────────────────
+const permissoesPossiveis=[
+  {id:'ver_faturamento',   label:'Ver Faturamento',    sub:'Cards de faturamento e desconto'},
+  {id:'ver_tipo_pedido',   label:'Ver Tipo de Pedido', sub:'Gráficos presencial/online'},
+  {id:'ver_caixa',         label:'Ver Caixa',          sub:'Controle de caixa do dia'},
+  {id:'ver_descontos',     label:'Ver Descontos',       sub:'Painel de descontos aplicados'},
+  {id:'editar_pedidos',    label:'Editar Pedidos',      sub:'Botão editar na tabela'},
+  {id:'remover_pedidos',   label:'Remover Pedidos',     sub:'Botão remover na tabela'},
+  {id:'fazer_recebimento', label:'Fazer Recebimento',   sub:'Botão receber na tabela'},
+];
+
+async function carregarPermissoes(){
+  const cont=document.getElementById('listaPermissoes');
+  try{
+    const res=await fetch('/api/usuarios');
+    const usuarios=await res.json();
+    const vendedores=usuarios.filter(u=>u.nivel!=='admin');
+    if(!vendedores.length){cont.innerHTML='<p style="text-align:center;color:#bbb;padding:20px;font-size:13px;">Nenhum vendedor cadastrado.</p>';return;}
+    cont.innerHTML=vendedores.map(u=>{
+      const perms=JSON.parse(localStorage.getItem(`perms_${u.id}`)||'{}');
+      return`<div class="user-perm-card">
+        <div class="upc-header">
+          <div class="upc-avatar">${u.usuario.charAt(0).toUpperCase()}</div>
+          <div class="upc-info"><div class="uname">${u.usuario}</div><div class="ulevel">Vendedor</div></div>
+        </div>
+        <div class="perms-grid">
+          ${permissoesPossiveis.map(p=>`
+            <div class="perm-row">
+              <div><div class="perm-label">${p.label}</div><div class="perm-sub">${p.sub}</div></div>
+              <label class="toggle">
+                <input type="checkbox" id="perm_${u.id}_${p.id}" ${perms[p.id]!==false?'checked':''}>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>`).join('')}
+        </div>
+        <button class="btn-salvar-perms" onclick="salvarPermissoes(${u.id},'${u.usuario}')">💾 Salvar Permissões de ${u.usuario}</button>
+      </div>`;
+    }).join('');
+  }catch(e){cont.innerHTML='<p style="color:#dc3545;font-size:13px;text-align:center;padding:20px;">Erro ao carregar usuários.</p>';}
+}
+
+function salvarPermissoes(userId,nome){
+  const perms={};
+  permissoesPossiveis.forEach(p=>{
+    const el=document.getElementById(`perm_${userId}_${p.id}`);
+    if(el)perms[p.id]=el.checked;
+  });
+  localStorage.setItem(`perms_${userId}`,JSON.stringify(perms));
+  showToast(`✅ Permissões de ${nome} salvas!`);
+}
+
+// Init
+renderFormas();
+renderBandeiras();
+
+// Enter nos inputs
+document.getElementById('novaForma').addEventListener('keydown',e=>{if(e.key==='Enter')adicionarForma();});
+document.getElementById('novaBandeira').addEventListener('keydown',e=>{if(e.key==='Enter')adicionarBandeira();});
+</script>
+</body>
+</html>

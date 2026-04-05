@@ -7,167 +7,45 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{
-  font-family:'DM Sans',sans-serif;
-  background:#0f0f1a;
-  display:flex;height:100vh;overflow:hidden;
-}
+body{font-family:'DM Sans',sans-serif;background:#0f0f1a;display:flex;height:100vh;overflow:hidden;}
 
-/* ── Sidebar ── */
-.sidebar{
-  width:230px;min-width:230px;
-  background:#13131f;
-  border-right:1px solid rgba(255,220,0,0.08);
-  display:flex;flex-direction:column;
-  padding:0;
-  transition:width 0.3s;
-  position:relative;z-index:10;
-}
+.sidebar{width:230px;min-width:230px;background:#13131f;border-right:1px solid rgba(255,220,0,0.08);display:flex;flex-direction:column;position:relative;z-index:10;}
+.sidebar-header{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:12px;}
+.sidebar-logo{width:40px;height:40px;background:linear-gradient(135deg,#ffe600,#ffb300);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#000;flex-shrink:0;box-shadow:0 0 14px rgba(255,200,0,0.25);}
+.sidebar-brand .name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#ffe600;white-space:nowrap;}
+.sidebar-brand .sub{font-size:10px;color:#444;letter-spacing:1px;text-transform:uppercase;}
 
-.sidebar-header{
-  padding:24px 20px 20px;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  display:flex;align-items:center;gap:12px;
-}
-.sidebar-logo{
-  width:40px;height:40px;
-  background:linear-gradient(135deg,#ffe600,#ffb300);
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#000;
-  flex-shrink:0;
-  box-shadow:0 0 14px rgba(255,200,0,0.25);
-}
-.sidebar-brand{
-  display:flex;flex-direction:column;
-  overflow:hidden;
-}
-.sidebar-brand .name{
-  font-family:'Syne',sans-serif;font-size:15px;font-weight:800;
-  color:#ffe600;white-space:nowrap;
-}
-.sidebar-brand .sub{
-  font-size:10px;color:#444;letter-spacing:1px;text-transform:uppercase;
-}
-
-/* Menu */
-.sidebar-menu{
-  flex:1;padding:16px 12px;
-  display:flex;flex-direction:column;gap:4px;overflow-y:auto;
-}
-.menu-label{
-  font-size:9px;font-weight:700;letter-spacing:1.5px;
-  text-transform:uppercase;color:#333;
-  padding:10px 10px 4px;
-}
-.menu-item{
-  display:flex;align-items:center;gap:12px;
-  padding:11px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  color:#888;
-  font-size:14px;font-weight:500;
-  transition:all 0.2s;
-  border:none;background:transparent;width:100%;text-align:left;
-  white-space:nowrap;
-}
+.sidebar-menu{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;}
+.menu-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#333;padding:10px 10px 4px;}
+.menu-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;cursor:pointer;color:#888;font-size:14px;font-weight:500;transition:all 0.2s;border:none;background:transparent;width:100%;text-align:left;white-space:nowrap;}
 .menu-item .icon{font-size:17px;flex-shrink:0;width:22px;text-align:center;}
 .menu-item:hover{background:rgba(255,220,0,0.06);color:#ddd;}
-.menu-item.ativo{
-  background:rgba(255,220,0,0.1);
-  color:#ffe600;
-  border-left:3px solid #ffe600;
-  padding-left:9px;
-}
+.menu-item.ativo{background:rgba(255,220,0,0.1);color:#ffe600;border-left:3px solid #ffe600;padding-left:9px;}
 
-/* Usuário logado */
-.sidebar-user{
-  padding:14px 16px;
-  border-top:1px solid rgba(255,255,255,0.05);
-  display:flex;align-items:center;gap:10px;
-}
-.user-avatar{
-  width:34px;height:34px;
-  background:linear-gradient(135deg,#2f7fb3,#4aa3df);
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:700;color:#fff;
-  flex-shrink:0;
-}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,#2f7fb3,#4aa3df);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
 .user-info{flex:1;overflow:hidden;}
 .user-info .uname{font-size:13px;font-weight:600;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .user-info .ulevel{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.8px;}
-.btn-sair{
-  background:rgba(220,53,69,0.12);
-  border:1px solid rgba(220,53,69,0.2);
-  color:#ff6b78;
-  padding:6px 10px;border-radius:8px;
-  font-size:12px;font-weight:600;cursor:pointer;
-  transition:all 0.2s;white-space:nowrap;
-  font-family:'DM Sans',sans-serif;
-}
+.btn-sair{background:rgba(220,53,69,0.12);border:1px solid rgba(220,53,69,0.2);color:#ff6b78;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:'DM Sans',sans-serif;}
 .btn-sair:hover{background:rgba(220,53,69,0.25);border-color:#dc3545;}
 
-/* Assinatura */
-.sidebar-footer{
-  padding:10px 16px 14px;
-  font-size:10px;color:#2a2a3a;text-align:center;
-  letter-spacing:0.5px;
-}
+.sidebar-footer{padding:10px 16px 14px;font-size:10px;color:#2a2a3a;text-align:center;letter-spacing:0.5px;}
 .sidebar-footer a{color:#2f7fb3;text-decoration:none;font-weight:600;}
 
-/* ── Conteúdo principal ── */
-.main{
-  flex:1;
-  background:#f4f7fb;
-  overflow:hidden;
-  display:flex;flex-direction:column;
-}
-
-/* Topbar do conteúdo */
-.main-topbar{
-  background:#fff;
-  border-bottom:1px solid #e8ecf0;
-  padding:14px 24px;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;
-}
-.main-topbar .page-title{
-  font-family:'Syne',sans-serif;
-  font-size:17px;font-weight:800;color:#1e1e2f;
-  display:flex;align-items:center;gap:8px;
-}
+.main{flex:1;background:#f4f7fb;overflow:hidden;display:flex;flex-direction:column;}
+.main-topbar{background:#fff;border-bottom:1px solid #e8ecf0;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.main-topbar .page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#1e1e2f;display:flex;align-items:center;gap:8px;}
 .main-topbar .breadcrumb{font-size:12px;color:#aaa;}
+.main-content{flex:1;overflow:hidden;}
+.main-content iframe{width:100%;height:100%;border:none;display:block;}
 
-/* Área de conteúdo */
-.main-content{
-  flex:1;overflow:hidden;
-}
-.main-content iframe{
-  width:100%;height:100%;border:none;display:block;
-}
-
-/* Boas vindas */
-.boas-vindas{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:100%;gap:20px;padding:40px;text-align:center;
-}
+.boas-vindas{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:20px;padding:40px;text-align:center;}
 .bv-icon{font-size:64px;}
-.bv-title{
-  font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
-  color:#1e1e2f;
-}
+.bv-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#1e1e2f;}
 .bv-sub{font-size:15px;color:#888;max-width:400px;line-height:1.6;}
-.bv-cards{
-  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:10px;
-}
-.bv-card{
-  background:#fff;border-radius:14px;padding:20px 24px;
-  box-shadow:0 2px 12px rgba(0,0,0,0.07);
-  display:flex;flex-direction:column;gap:6px;
-  cursor:pointer;transition:all 0.2s;border:2px solid transparent;
-  min-width:140px;
-}
+.bv-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:10px;}
+.bv-card{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.07);display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:all 0.2s;border:2px solid transparent;min-width:140px;}
 .bv-card:hover{border-color:#2f7fb3;transform:translateY(-3px);box-shadow:0 6px 20px rgba(47,127,179,0.15);}
 .bv-card .bc-icon{font-size:28px;}
 .bv-card .bc-label{font-size:13px;font-weight:600;color:#333;}
@@ -175,7 +53,6 @@ body{
 </head>
 <body>
 
-<!-- Sidebar -->
 <div class="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo">MP</div>
@@ -200,9 +77,13 @@ body{
       <span class="icon">💳</span> Recebimento
     </button>
 
-    <div class="menu-label" style="margin-top:8px;">Configurações</div>
-    <button class="menu-item" id="menu-usuarios" onclick="abrirPagina('usuarios','👥 Usuários','Usuários')">
+    <!-- Só admin vê estas opções -->
+    <div class="menu-label admin-only" style="display:none">Configurações</div>
+    <button class="menu-item admin-only" id="menu-usuarios" style="display:none" onclick="abrirPagina('usuarios','👥 Usuários','Usuários')">
       <span class="icon">👥</span> Usuários
+    </button>
+    <button class="menu-item admin-only" id="menu-configuracoes" style="display:none" onclick="abrirPagina('configuracoes','⚙️ Configurações','Configurações')">
+      <span class="icon">⚙️</span> Configurações
     </button>
   </div>
 
@@ -214,41 +95,26 @@ body{
     </div>
     <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
-
   <div class="sidebar-footer">
     Desenvolvido por <a href="https://instagram.com/mts_computadores" target="_blank">MTScomputadores</a>
   </div>
 </div>
 
-<!-- Área principal -->
 <div class="main">
   <div class="main-topbar">
     <span class="page-title" id="pageTitle">🏠 Início</span>
     <span class="breadcrumb" id="pageBreadcrumb">Mpx Arts › Início</span>
   </div>
   <div class="main-content" id="conteudo">
-    <!-- Boas vindas -->
     <div class="boas-vindas">
       <div class="bv-icon">👋</div>
       <div class="bv-title">Bem-vindo, <span id="nomeBoasVindas">—</span>!</div>
-      <div class="bv-sub">Selecione uma opção no menu lateral para começar a trabalhar.</div>
+      <div class="bv-sub">Selecione uma opção no menu lateral para começar.</div>
       <div class="bv-cards">
-        <div class="bv-card" onclick="abrirPagina('dashboard','📊 Dashboard','Dashboard')">
-          <span class="bc-icon">📊</span>
-          <span class="bc-label">Dashboard</span>
-        </div>
-        <div class="bv-card" onclick="abrirPagina('pedidos','📦 Pedidos','Pedidos')">
-          <span class="bc-icon">📦</span>
-          <span class="bc-label">Pedidos</span>
-        </div>
-        <div class="bv-card" onclick="abrirPagina('novo','📋 Novo Pedido','Novo Pedido')">
-          <span class="bc-icon">📋</span>
-          <span class="bc-label">Novo Pedido</span>
-        </div>
-        <div class="bv-card" onclick="abrirPagina('recebimento','💳 Recebimento','Recebimento')">
-          <span class="bc-icon">💳</span>
-          <span class="bc-label">Recebimento</span>
-        </div>
+        <div class="bv-card" onclick="abrirPagina('dashboard','📊 Dashboard','Dashboard')"><span class="bc-icon">📊</span><span class="bc-label">Dashboard</span></div>
+        <div class="bv-card" onclick="abrirPagina('pedidos','📦 Pedidos','Pedidos')"><span class="bc-icon">📦</span><span class="bc-label">Pedidos</span></div>
+        <div class="bv-card" onclick="abrirPagina('novo','📋 Novo Pedido','Novo Pedido')"><span class="bc-icon">📋</span><span class="bc-label">Novo Pedido</span></div>
+        <div class="bv-card" onclick="abrirPagina('recebimento','💳 Recebimento','Recebimento')"><span class="bc-icon">💳</span><span class="bc-label">Recebimento</span></div>
       </div>
     </div>
   </div>
@@ -257,46 +123,40 @@ body{
 <script>
 if(sessionStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'login.html';
 
-// Info do usuário
 const usuario = sessionStorage.getItem('usuarioLogado') || 'Usuário';
 const nivel   = sessionStorage.getItem('nivelAcesso')   || 'vendedor';
+
 document.getElementById('userName').textContent  = usuario;
 document.getElementById('userLevel').textContent = nivel;
 document.getElementById('userAvatar').textContent = usuario.charAt(0).toUpperCase();
 document.getElementById('nomeBoasVindas').textContent = usuario;
 
-// Ocultar menu de usuários se não for admin
-if(nivel !== 'admin'){
-  document.getElementById('menu-usuarios').style.display = 'none';
+// Mostra itens de admin
+if(nivel === 'admin'){
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
 }
 
-function abrirPagina(pagina, titulo, breadcrumb){
-  const conteudo = document.getElementById('conteudo');
-  document.getElementById('pageTitle').textContent = titulo || pagina;
-  document.getElementById('pageBreadcrumb').textContent = `Mpx Arts › ${breadcrumb || pagina}`;
+const mapa = {
+  dashboard:     'dashboard.html',
+  pedidos:       'meus-pedidos.html',
+  novo:          'index.html',
+  recebimento:   'recebimento.html',
+  usuarios:      'gerenciarusuario.html',
+  configuracoes: 'configuracoes.html',
+};
 
-  // Ativo no menu
+function abrirPagina(pagina, titulo, breadcrumb){
+  document.getElementById('pageTitle').textContent    = titulo || pagina;
+  document.getElementById('pageBreadcrumb').textContent = `Mpx Arts › ${breadcrumb || pagina}`;
   document.querySelectorAll('.menu-item').forEach(b=>b.classList.remove('ativo'));
   const el = document.getElementById('menu-'+pagina);
   if(el) el.classList.add('ativo');
-
-  const mapa = {
-    dashboard:   'dashboard.html',
-    pedidos:     'meus-pedidos.html',
-    novo:        'index.html',
-    recebimento: 'recebimento.html',
-    usuarios:    'gerenciarusuario.html',
-  };
-
   if(mapa[pagina]){
-    conteudo.innerHTML = `<iframe src="${mapa[pagina]}"></iframe>`;
+    document.getElementById('conteudo').innerHTML = `<iframe src="${mapa[pagina]}"></iframe>`;
   }
 }
 
-function sair(){
-  sessionStorage.clear();
-  window.location.href = 'login.html';
-}
+function sair(){ sessionStorage.clear(); window.location.href = 'login.html'; }
 </script>
 </body>
 </html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 Metas de Vendas</title>
+
+<!-- ✅ PROTEÇÃO — apenas admin -->
+<script>
+(async function() {
+  try {
+    const res  = await fetch('/api/me', { credentials: 'include' });
+    const data = await res.json();
+    if (!res.ok || !data.ok)      { window.location.replace('login.html');  return; }
+    if (data.nivel !== 'admin')   { window.location.replace('painel.html'); return; }
+    sessionStorage.setItem('isLoggedIn',    'true');
+    sessionStorage.setItem('usuarioLogado', data.usuario);
+    sessionStorage.setItem('nivelAcesso',   data.nivel);
+  } catch { window.location.replace('login.html'); }
+})();
+</script>
+
+<style>
+:root{
+  --primary:#2f7fb3;--primary-h:#25658d;
+  --success:#28a745;--danger:#dc3545;
+  --warning:#ffc107;--gray:#333;--border:#dde3ee;--light:#f4f7fb;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI",Arial,sans-serif;background:var(--light);min-height:100vh;padding:28px 16px 60px;}
+
+/* ── Header ─────────────────────────────────────── */
+.page-header{max-width:860px;margin:0 auto 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.page-header h1{font-size:22px;font-weight:800;color:var(--primary);display:flex;align-items:center;gap:8px;}
+.page-header p{font-size:13px;color:#888;margin-top:3px;}
+
+/* ── Seletor de mês ─────────────────────────────── */
+.mes-selector{
+  display:flex;align-items:center;gap:10px;
+  background:#fff;border:1px solid var(--border);
+  border-radius:10px;padding:10px 16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+.mes-selector label{font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;}
+.mes-selector select{
+  padding:7px 12px;border:1px solid var(--border);border-radius:8px;
+  font-size:14px;font-weight:600;color:var(--gray);
+  background:#fafafa;outline:none;cursor:pointer;
+}
+.mes-selector select:focus{border-color:var(--primary);}
+
+/* ── Layout ─────────────────────────────────────── */
+.layout{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}}
+
+/* ── Box genérico ───────────────────────────────── */
+.box{background:#fff;border-radius:14px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid var(--border);}
+.box-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--primary);margin-bottom:18px;display:flex;align-items:center;gap:6px;}
+.box-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Card de meta por vendedor ──────────────────── */
+.meta-card{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;background:#f7f9ff;
+  border-radius:12px;border:1px solid var(--border);
+  margin-bottom:10px;transition:border-color 0.2s,box-shadow 0.2s;
+}
+.meta-card:last-child{margin-bottom:0;}
+.meta-card:hover{border-color:var(--primary);box-shadow:0 2px 10px rgba(47,127,179,0.1);}
+
+.mc-avatar{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--primary),#4aa3df);
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:800;color:#fff;
+}
+
+.mc-info{flex:1;min-width:0;}
+.mc-nome{font-size:14px;font-weight:700;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mc-sub{font-size:11px;color:#aaa;margin-top:2px;}
+
+/* Barra de progresso dentro do card */
+.mc-progress{margin-top:8px;}
+.mc-bar-bg{height:7px;background:#e9ecef;border-radius:10px;overflow:hidden;}
+.mc-bar-fill{height:100%;border-radius:10px;transition:width 0.7s cubic-bezier(.23,1,.32,1);}
+.mc-bar-fill.ok    {background:linear-gradient(90deg,#28a745,#20c858);}
+.mc-bar-fill.warn  {background:linear-gradient(90deg,#fd7e14,#ffc107);}
+.mc-bar-fill.danger{background:linear-gradient(90deg,#dc3545,#ff7c87);}
+.mc-bar-labels{display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:4px;}
+.mc-bar-labels .pct{font-weight:700;}
+.mc-bar-labels .pct.ok    {color:var(--success);}
+.mc-bar-labels .pct.warn  {color:#fd7e14;}
+.mc-bar-labels .pct.danger{color:var(--danger);}
+
+/* Input de meta inline */
+.mc-input-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.mc-prefix{font-size:13px;font-weight:700;color:#aaa;}
+.mc-input{
+  width:110px;padding:8px 10px;
+  border:1px solid var(--border);border-radius:8px;
+  font-size:14px;font-weight:700;text-align:right;
+  color:var(--gray);background:#fff;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  font-family:inherit;
+}
+.mc-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(47,127,179,0.12);}
+.mc-input.salvo{border-color:var(--success);background:#eafaf1;}
+
+.btn-salvar-card{
+  padding:8px 14px;background:var(--primary);color:#fff;
+  border:none;border-radius:8px;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;white-space:nowrap;
+  display:flex;align-items:center;gap:4px;
+}
+.btn-salvar-card:hover{background:var(--primary-h);transform:translateY(-1px);}
+.btn-salvar-card.loading{opacity:0.6;pointer-events:none;}
+
+/* Botão salvar todos */
+.btn-salvar-todos{
+  width:100%;margin-top:18px;padding:13px;
+  background:linear-gradient(135deg,var(--success),#20c858);
+  color:#fff;border:none;border-radius:10px;
+  font-size:15px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 14px rgba(40,167,69,0.3);
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-salvar-todos:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(40,167,69,0.4);}
+.btn-salvar-todos:active{transform:translateY(0);}
+.btn-salvar-todos.loading{opacity:0.7;pointer-events:none;}
+
+/* ── Painel lateral de resumo ───────────────────── */
+.resumo-mes{display:flex;flex-direction:column;gap:12px;}
+
+.rm-card{
+  background:#f7f9ff;border:1px solid var(--border);
+  border-radius:12px;padding:16px 18px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.rm-icon{font-size:22px;margin-bottom:4px;}
+.rm-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#aaa;}
+.rm-val{font-size:22px;font-weight:800;color:var(--gray);}
+.rm-val.verde {color:var(--success);}
+.rm-val.azul  {color:var(--primary);}
+.rm-val.laranja{color:#fd7e14;}
+
+/* Ranking lateral */
+.rank-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:#f7f9ff;
+  border-radius:10px;border:1px solid var(--border);
+  margin-bottom:8px;
+}
+.rank-item:last-child{margin-bottom:0;}
+.rank-pos{font-size:18px;flex-shrink:0;width:28px;text-align:center;}
+.rank-info{flex:1;min-width:0;}
+.rank-nome{font-size:13px;font-weight:700;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rank-qtd{font-size:11px;color:#aaa;margin-top:1px;}
+.rank-val{font-size:14px;font-weight:800;color:var(--success);flex-shrink:0;}
+
+/* Vazio */
+.vazio{text-align:center;color:#bbb;font-size:13px;padding:24px 0;font-style:italic;}
+
+/* Toast */
+.toast{position:fixed;bottom:22px;right:22px;background:#fff;border-left:4px solid var(--success);border-radius:8px;padding:13px 18px;font-size:14px;font-weight:600;color:var(--gray);box-shadow:0 6px 24px rgba(0,0,0,0.15);z-index:9999;animation:toastIn 0.3s ease;max-width:290px;}
+.toast.error{border-color:var(--danger);}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="page-header" style="max-width:860px;margin:0 auto 20px;">
+  <div>
+    <h1>🎯 Metas de Vendas</h1>
+    <p>Defina a meta mensal de cada vendedor e acompanhe o progresso em tempo real.</p>
+  </div>
+  <div class="mes-selector">
+    <label>📅 Mês</label>
+    <select id="selMes" onchange="carregarTudo()"></select>
+  </div>
+</div>
+
+<!-- Layout principal -->
+<div class="layout">
+
+  <!-- Coluna esquerda — cards de meta por vendedor -->
+  <div class="box">
+    <div class="box-title">👤 Meta por Vendedor</div>
+    <div id="metasContainer">
+      <p class="vazio">Carregando vendedores...</p>
+    </div>
+    <button class="btn-salvar-todos" id="btnSalvarTodos" onclick="salvarTodos()">
+      💾 Salvar Todas as Metas
+    </button>
+  </div>
+
+  <!-- Coluna direita — resumo do mês -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <!-- Cards de resumo -->
+    <div class="box">
+      <div class="box-title">📊 Resumo do Mês</div>
+      <div class="resumo-mes">
+        <div class="rm-card">
+          <span class="rm-icon">💰</span>
+          <span class="rm-label">Total Vendido no Mês</span>
+          <span class="rm-val verde" id="rmTotalVendido">R$ 0,00</span>
+        </div>
+        <div class="rm-card">
+          <span class="rm-icon">🎯</span>
+          <span class="rm-label">Soma das Metas</span>
+          <span class="rm-val azul" id="rmTotalMeta">R$ 0,00</span>
+        </div>
+        <div class="rm-card">
+          <span class="rm-icon">📦</span>
+          <span class="rm-label">Pedidos no Mês</span>
+          <span class="rm-val laranja" id="rmTotalPedidos">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ranking do mês -->
+    <div class="box">
+      <div class="box-title">🏆 Ranking do Mês</div>
+      <div id="rankingContainer">
+        <p class="vazio">Carregando...</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function fmtBRL(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function showToast(msg,type='success'){const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+// ── Popula select de mês ──────────────────────────────────
+function popularMeses(){
+  const sel=document.getElementById('selMes');
+  const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+               'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const agora=new Date();
+  sel.innerHTML='';
+  for(let i=0;i<12;i++){
+    const mes=(agora.getMonth()-i+12)%12;
+    const ano=agora.getFullYear()-(agora.getMonth()-i<0?1:0);
+    const opt=document.createElement('option');
+    opt.value=`${ano}-${String(mes+1).padStart(2,'0')}`;
+    opt.textContent=`${meses[mes]} ${ano}`;
+    if(i===0)opt.selected=true;
+    sel.appendChild(opt);
+  }
+}
+
+function getMesAno(){
+  const [ano,mes]=document.getElementById('selMes').value.split('-');
+  return {mes:parseInt(mes),ano:parseInt(ano)};
+}
+
+// ── Carrega ranking + metas e monta tela ──────────────────
+async function carregarTudo(){
+  const {mes,ano}=getMesAno();
+  try{
+    const [resRank,resMetas]=await Promise.all([
+      fetch(`/api/vendedores?ranking=1&mes=${mes}&ano=${ano}`,{credentials:'include'}),
+      fetch(`/api/vendedores?metas=1&mes=${mes}&ano=${ano}`,{credentials:'include'}),
+    ]);
+    const ranking = await resRank.json();
+    const metas   = await resMetas.json();
+
+    // mapeia meta salva pelo nome do vendedor
+    const metaMap={};
+    metas.forEach(m=>{metaMap[m.vendedor]=Number(m.valor_meta);});
+
+    renderMetas(ranking, metaMap);
+    renderResumo(ranking, metaMap);
+    renderRanking(ranking);
+
+  }catch(e){
+    document.getElementById('metasContainer').innerHTML='<p class="vazio" style="color:#dc3545;">Erro ao carregar dados.</p>';
+  }
+}
+
+// ── Renderiza cards de meta ───────────────────────────────
+function renderMetas(ranking, metaMap){
+  const cont=document.getElementById('metasContainer');
+
+  // Se não há nenhum vendedor com pedido ainda no mês,
+  // usamos a lista de todos os vendedores cadastrados
+  if(!ranking.length){
+    cont.innerHTML='<p class="vazio">Nenhum pedido registrado neste mês ainda.<br>As metas podem ser lançadas assim que houver vendas.</p>';
+    return;
+  }
+
+  cont.innerHTML=ranking.map(v=>{
+    const meta    = metaMap[v.vendedor]||0;
+    const total   = v.total_vendas||0;
+    const pct     = meta>0?Math.min(100,(total/meta)*100):0;
+    const barCls  = pct>=100?'ok':pct>=50?'warn':'danger';
+    const pctTxt  = meta>0?Math.round(pct)+'%':'—';
+
+    return`<div class="meta-card" id="card-${CSS.escape(v.vendedor)}">
+      <div class="mc-avatar">${v.vendedor.charAt(0).toUpperCase()}</div>
+      <div class="mc-info">
+        <div class="mc-nome">${v.vendedor}</div>
+        <div class="mc-sub">${v.qtd_pedidos} pedido${v.qtd_pedidos!==1?'s':''} · ${fmtBRL(total)} vendido</div>
+        ${meta>0?`
+        <div class="mc-progress">
+          <div class="mc-bar-bg"><div class="mc-bar-fill ${barCls}" style="width:${pct}%"></div></div>
+          <div class="mc-bar-labels">
+            <span>Meta: ${fmtBRL(meta)}</span>
+            <span class="pct ${barCls}">${pctTxt}</span>
+          </div>
+        </div>`:'<div style="height:8px;"></div>'}
+      </div>
+      <div class="mc-input-wrap">
+        <span class="mc-prefix">R$</span>
+        <input
+          class="mc-input ${meta>0?'salvo':''}"
+          type="number" step="100" min="0"
+          placeholder="0,00"
+          value="${meta||''}"
+          data-vendedor="${v.vendedor}"
+          id="input-meta-${v.vendedor.replace(/\s/g,'_')}"
+          oninput="this.classList.remove('salvo')"
+        >
+        <button class="btn-salvar-card" onclick="salvarUma('${v.vendedor.replace(/'/g,"\\'")}')">
+          💾
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Resumo lateral ────────────────────────────────────────
+function renderResumo(ranking, metaMap){
+  const totalVendido = ranking.reduce((a,v)=>a+Number(v.total_vendas||0),0);
+  const totalMeta    = Object.values(metaMap).reduce((a,v)=>a+v,0);
+  const totalPedidos = ranking.reduce((a,v)=>a+Number(v.qtd_pedidos||0),0);
+  document.getElementById('rmTotalVendido').textContent = fmtBRL(totalVendido);
+  document.getElementById('rmTotalMeta').textContent    = fmtBRL(totalMeta);
+  document.getElementById('rmTotalPedidos').textContent = totalPedidos;
+}
+
+// ── Ranking lateral ───────────────────────────────────────
+function renderRanking(ranking){
+  const cont=document.getElementById('rankingContainer');
+  const ranked=[...ranking].sort((a,b)=>b.total_vendas-a.total_vendas);
+  const emojis=['🥇','🥈','🥉'];
+  if(!ranked.length){cont.innerHTML='<p class="vazio">Sem vendas neste mês.</p>';return;}
+  cont.innerHTML=ranked.map((v,i)=>`
+    <div class="rank-item">
+      <span class="rank-pos">${i<3?emojis[i]:'#'+(i+1)}</span>
+      <div class="rank-info">
+        <div class="rank-nome">${v.vendedor}</div>
+        <div class="rank-qtd">${v.qtd_pedidos} pedido${v.qtd_pedidos!==1?'s':''}</div>
+      </div>
+      <span class="rank-val">${fmtBRL(v.total_vendas)}</span>
+    </div>
+  `).join('');
+}
+
+// ── Salvar uma meta individual ────────────────────────────
+async function salvarUma(vendedor){
+  const {mes,ano}=getMesAno();
+  const inputId='input-meta-'+vendedor.replace(/\s/g,'_');
+  const inp=document.getElementById(inputId);
+  if(!inp)return;
+
+  const valor=parseFloat(inp.value)||0;
+  const btn=inp.closest('.meta-card').querySelector('.btn-salvar-card');
+  btn.classList.add('loading');btn.textContent='...';
+
+  try{
+    const res=await fetch('/api/vendedores?metas=1',{
+      method:'POST',credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({vendedor,valor_meta:valor,mes,ano})
+    });
+    if(res.ok){
+      inp.classList.add('salvo');
+      showToast(`✅ Meta de ${vendedor} salva!`);
+      carregarTudo();
+    }else{
+      const err=await res.json();
+      showToast('❌ '+(err.error||'Erro ao salvar'),'error');
+    }
+  }catch{showToast('❌ Erro de conexão','error');}
+  finally{btn.classList.remove('loading');btn.textContent='💾';}
+}
+
+// ── Salvar todas de uma vez ───────────────────────────────
+async function salvarTodos(){
+  const {mes,ano}=getMesAno();
+  const inputs=document.querySelectorAll('.mc-input');
+  if(!inputs.length){showToast('Nenhum vendedor para salvar.','error');return;}
+
+  const btn=document.getElementById('btnSalvarTodos');
+  btn.classList.add('loading');btn.textContent='Salvando...';
+
+  let erros=0;
+  for(const inp of inputs){
+    const vendedor=inp.dataset.vendedor;
+    const valor=parseFloat(inp.value)||0;
+    try{
+      const res=await fetch('/api/vendedores?metas=1',{
+        method:'POST',credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({vendedor,valor_meta:valor,mes,ano})
+      });
+      if(res.ok) inp.classList.add('salvo');
+      else erros++;
+    }catch{erros++;}
+  }
+
+  btn.classList.remove('loading');
+  btn.innerHTML='💾 Salvar Todas as Metas';
+
+  if(erros===0){showToast(`✅ Todas as metas salvas!`);}
+  else{showToast(`⚠️ ${erros} meta(s) com erro.`,'error');}
+  carregarTudo();
+}
+
+// ── Init ──────────────────────────────────────────────────
+popularMeses();
+carregarTudo();
+setInterval(carregarTudo, 20000);
+</script>
+</body>
+</html>

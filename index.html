@@ -6,210 +6,75 @@
 <title>📦 Cadastro de Pedido</title>
 <style>
 :root {
-    --primary: #2f7fb3;
-    --primary-hover: #25658d;
-    --success: #28a745;
-    --success-hover: #218838;
-    --danger: #dc3545;
-    --danger-hover: #b02a37;
-    --yellow: #effa4f;
-    --dark: #19191a;
-    --gray: #333;
-    --border-color: #ccc;
+    --primary: #2f7fb3;--primary-hover: #25658d;
+    --success: #28a745;--success-hover: #218838;
+    --danger: #dc3545;--danger-hover: #b02a37;
+    --yellow: #effa4f;--dark: #19191a;--gray: #333;--border-color: #ccc;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     font-family: "Segoe UI", Arial, sans-serif;
     background: var(--dark);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 30px 15px 60px;
+    display: flex; justify-content: center; align-items: flex-start;
+    min-height: 100vh; padding: 30px 15px 60px;
 }
 .container {
-    background: var(--yellow);
-    width: 100%;
-    max-width: 520px;
-    padding: 28px 26px;
-    border-radius: 14px;
+    background: var(--yellow); width: 100%; max-width: 520px;
+    padding: 28px 26px; border-radius: 14px;
     box-shadow: 0px 6px 28px rgba(0,0,0,0.35);
 }
-
-/* ── Header ── */
-.page-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 22px;
-    border-bottom: 2px solid rgba(47,127,179,0.25);
-    padding-bottom: 16px;
-}
+.page-title { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; border-bottom: 2px solid rgba(47,127,179,0.25); padding-bottom: 16px; }
 .page-title h1 { font-size: 22px; color: var(--primary); font-weight: 700; }
 .page-title .emoji { font-size: 26px; }
-
-/* ── Seções ── */
-.section {
-    background: #fff;
-    border-radius: 10px;
-    padding: 16px 16px 12px;
-    margin-bottom: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-.section-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--primary);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
+.section { background: #fff; border-radius: 10px; padding: 16px 16px 12px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 .section-title::after { content: ''; flex: 1; height: 1px; background: #dde; }
-
-/* ── Tipo de Pedido ── */
-.tipo-pedido-wrap {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-.tipo-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 14px 10px;
-    border: 2px solid #dde;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #f7f9ff;
-    user-select: none;
-}
+.tipo-pedido-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tipo-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 14px 10px; border: 2px solid #dde; border-radius: 10px; cursor: pointer; transition: all 0.2s; background: #f7f9ff; user-select: none; }
 .tipo-btn:hover { border-color: var(--primary); background: #eef4fb; }
-.tipo-btn.ativo-presencial {
-    border-color: var(--success);
-    background: #eafaf1;
-    box-shadow: 0 0 0 3px rgba(40,167,69,0.15);
-}
-.tipo-btn.ativo-online {
-    border-color: var(--primary);
-    background: #eef4fb;
-    box-shadow: 0 0 0 3px rgba(47,127,179,0.15);
-}
+.tipo-btn.ativo-presencial { border-color: var(--success); background: #eafaf1; box-shadow: 0 0 0 3px rgba(40,167,69,0.15); }
+.tipo-btn.ativo-online { border-color: var(--primary); background: #eef4fb; box-shadow: 0 0 0 3px rgba(47,127,179,0.15); }
 .tipo-btn .tipo-icone { font-size: 26px; }
-.tipo-btn .tipo-texto {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--gray);
-}
-.tipo-btn .tipo-badge {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: #dde;
-    color: #666;
-    transition: all 0.2s;
-}
-.tipo-btn.ativo-presencial .tipo-badge {
-    background: var(--success);
-    color: #fff;
-}
-.tipo-btn.ativo-online .tipo-badge {
-    background: var(--primary);
-    color: #fff;
-}
-.tipo-btn .tipo-check {
-    font-size: 16px;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-.tipo-btn.ativo-presencial .tipo-check,
-.tipo-btn.ativo-online .tipo-check { opacity: 1; }
-
-/* ── Form ── */
+.tipo-btn .tipo-texto { font-size: 13px; font-weight: 700; color: var(--gray); }
+.tipo-btn .tipo-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; background: #dde; color: #666; transition: all 0.2s; }
+.tipo-btn.ativo-presencial .tipo-badge { background: var(--success); color: #fff; }
+.tipo-btn.ativo-online .tipo-badge { background: var(--primary); color: #fff; }
+.tipo-btn .tipo-check { font-size: 16px; opacity: 0; transition: opacity 0.2s; }
+.tipo-btn.ativo-presencial .tipo-check, .tipo-btn.ativo-online .tipo-check { opacity: 1; }
 .form-group { margin-bottom: 12px; }
 .form-group:last-child { margin-bottom: 0; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 label { display: block; font-size: 12px; font-weight: 600; color: var(--gray); margin-bottom: 4px; }
 input, textarea, select {
-    width: 100%;
-    padding: 9px 11px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--gray);
-    background: #fafafa;
-    transition: border-color 0.25s, box-shadow 0.25s;
-    outline: none;
-    appearance: none;
+    width: 100%; padding: 9px 11px; border: 1px solid var(--border-color); border-radius: 8px;
+    font-family: inherit; font-size: 14px; color: var(--gray); background: #fafafa;
+    transition: border-color 0.25s, box-shadow 0.25s; outline: none; appearance: none;
 }
-input:focus, textarea:focus, select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(47,127,179,0.15);
-    background: #fff;
-}
+input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(47,127,179,0.15); background: #fff; }
 input[readonly] { background: #f0f0f0; color: #777; cursor: default; }
 textarea { resize: vertical; min-height: 72px; }
 
-/* ── Item block ── */
-.item-block {
-    border: 1px solid #dde;
-    background: #f7f9ff;
-    border-radius: 9px;
-    padding: 14px 14px 10px;
-    margin-bottom: 10px;
-    animation: fadeIn 0.2s ease;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
+/* ── Vendedor select com avatar ── */
+.vendedor-wrap { position: relative; }
+.vendedor-wrap select { padding-left: 36px; }
+.vendedor-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+.vendedor-loading { font-size: 11px; color: #aaa; margin-top: 4px; display: none; }
+
+.item-block { border: 1px solid #dde; background: #f7f9ff; border-radius: 9px; padding: 14px 14px 10px; margin-bottom: 10px; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .item-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--primary); }
 .item-subtotal { font-size: 13px; font-weight: 700; color: var(--success); }
 .item-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
-
-/* ── Desconto ── */
 .discount-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-/* ── Resumo ── */
-.resumo-box {
-    background: #f7f9ff;
-    border: 1px solid #dde;
-    border-radius: 9px;
-    padding: 12px 14px;
-    margin-top: 14px;
-}
+.resumo-box { background: #f7f9ff; border: 1px solid #dde; border-radius: 9px; padding: 12px 14px; margin-top: 14px; }
 .resumo-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #555; padding: 4px 0; }
 .resumo-row.total { border-top: 1px solid #ccd; margin-top: 6px; padding-top: 10px; font-size: 17px; font-weight: 700; color: var(--gray); }
 .resumo-row.total span:last-child { color: var(--primary); }
 .resumo-row.saldo span:last-child { color: var(--success); font-weight: 600; }
 .resumo-row.devedor span:last-child { color: var(--danger); font-weight: 600; }
 .resumo-row.desconto-row span:last-child { color: var(--danger); }
-
-/* ── Botões ── */
-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
-}
+button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.25s, transform 0.15s, box-shadow 0.25s; }
 .btn-success { background: var(--success); color: #fff; }
 .btn-success:hover { background: var(--success-hover); }
 .btn-danger { background: var(--danger); color: #fff; }
@@ -220,34 +85,14 @@ button {
 .btn-enviar:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(47,127,179,0.35); }
 .btn-enviar:active { transform: translateY(0); }
 .btn-enviar.loading { opacity: 0.75; pointer-events: none; }
-.btn-enviar.loading::after {
-    content: '';
-    display: inline-block;
-    width: 14px; height: 14px;
-    border: 2px solid #fff;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    margin-left: 8px;
-}
+.btn-enviar.loading::after { content: ''; display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; margin-left: 8px; vertical-align: middle; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 .view-orders { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; color: var(--primary); text-decoration: none; font-weight: 700; font-size: 14px; }
 .view-orders:hover { text-decoration: underline; }
 .footer { text-align: center; margin-top: 18px; font-size: 12px; color: #666; }
-
-/* ── Toast ── */
-.toast {
-    position: fixed; bottom: 22px; right: 22px;
-    background: #fff; border-left: 4px solid var(--success);
-    border-radius: 8px; padding: 13px 18px;
-    font-size: 14px; font-weight: 600; color: var(--gray);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.15); z-index: 9999;
-    animation: toastIn 0.3s ease; max-width: 280px;
-}
+.toast { position: fixed; bottom: 22px; right: 22px; background: #fff; border-left: 4px solid var(--success); border-radius: 8px; padding: 13px 18px; font-size: 14px; font-weight: 600; color: var(--gray); box-shadow: 0 6px 24px rgba(0,0,0,0.15); z-index: 9999; animation: toastIn 0.3s ease; max-width: 280px; }
 .toast.error { border-color: var(--danger); }
 @keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-
 @media (max-width: 460px) {
     .form-row { grid-template-columns: 1fr; }
     .item-grid { grid-template-columns: 1fr 1fr; }
@@ -290,9 +135,16 @@ button {
         <div class="section">
             <div class="section-title">👤 Dados do Pedido</div>
             <div class="form-row">
+                <!-- ✅ Campo Vendedor — puxado da API -->
                 <div class="form-group">
                     <label for="seuNome">Vendedor</label>
-                    <input type="text" id="seuNome" placeholder="Seu nome" required>
+                    <div class="vendedor-wrap">
+                        <span class="vendedor-icon">👤</span>
+                        <select id="seuNome" required>
+                            <option value="">Carregando...</option>
+                        </select>
+                    </div>
+                    <div class="vendedor-loading" id="vendedorLoading">⏳ Carregando vendedores...</div>
                 </div>
                 <div class="form-group">
                     <label for="nomeCliente">Cliente</label>
@@ -344,22 +196,10 @@ button {
                 <input type="number" step="0.01" id="valorRecebido" placeholder="0,00" oninput="calcularResumo()" required>
             </div>
             <div class="resumo-box">
-                <div class="resumo-row">
-                    <span>Subtotal</span>
-                    <span id="rSubtotal">R$ 0,00</span>
-                </div>
-                <div class="resumo-row desconto-row" id="rowDesc" style="display:none">
-                    <span>Desconto</span>
-                    <span id="rDesconto">- R$ 0,00</span>
-                </div>
-                <div class="resumo-row total">
-                    <span>💰 Total</span>
-                    <span id="rTotal">R$ 0,00</span>
-                </div>
-                <div class="resumo-row" id="rowSaldo">
-                    <span id="labelSaldo">Saldo</span>
-                    <span id="rSaldo">R$ 0,00</span>
-                </div>
+                <div class="resumo-row"><span>Subtotal</span><span id="rSubtotal">R$ 0,00</span></div>
+                <div class="resumo-row desconto-row" id="rowDesc" style="display:none"><span>Desconto</span><span id="rDesconto">- R$ 0,00</span></div>
+                <div class="resumo-row total"><span>💰 Total</span><span id="rTotal">R$ 0,00</span></div>
+                <div class="resumo-row" id="rowSaldo"><span id="labelSaldo">Saldo</span><span id="rSaldo">R$ 0,00</span></div>
             </div>
         </div>
 
@@ -379,8 +219,8 @@ button {
 </div>
 
 <script>
-// ─── Datas ───────────────────────────────────────────────
-const hoje = new Date();
+// ─── Datas ─────────────────────────────────────────────────
+const hoje   = new Date();
 const entrega = new Date();
 entrega.setDate(hoje.getDate() + 10);
 
@@ -390,32 +230,62 @@ function formatDateLocal(d) {
 function formatDisplay(d) {
     return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 }
-document.getElementById("dataPedido").value = formatDisplay(hoje);
+document.getElementById("dataPedido").value  = formatDisplay(hoje);
 document.getElementById("dataEntrega").value = formatDateLocal(entrega);
 
-// ─── Tipo de Pedido ─────────────────────────────────────
+// ─── ✅ Carrega vendedores da API ───────────────────────────
+async function carregarVendedores() {
+    const sel     = document.getElementById('seuNome');
+    const loading = document.getElementById('vendedorLoading');
+    loading.style.display = 'block';
+    try {
+        const res       = await fetch('/api/vendedores', { credentials: 'include' });
+        const vendedores = await res.json();
+        const ativos    = vendedores.filter(v => v.ativo);
+
+        sel.innerHTML = '<option value="">— Selecione o vendedor —</option>';
+        ativos.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value       = v.nome;
+            opt.textContent = v.nome;
+            sel.appendChild(opt);
+        });
+
+        // Pré-seleciona o próprio usuário logado se for vendedor cadastrado
+        const usuarioLogado = sessionStorage.getItem('usuarioLogado') || '';
+        const match = ativos.find(v => v.nome.toLowerCase() === usuarioLogado.toLowerCase());
+        if (match) sel.value = match.nome;
+
+    } catch {
+        sel.innerHTML = '<option value="">Erro ao carregar — digite o nome</option>';
+        // Fallback: transforma em input de texto
+        sel.outerHTML = `<div class="vendedor-wrap"><span class="vendedor-icon">👤</span><input type="text" id="seuNome" placeholder="Seu nome" required></div>`;
+    } finally {
+        loading.style.display = 'none';
+    }
+}
+carregarVendedores();
+
+// ─── Tipo de Pedido ────────────────────────────────────────
 let tipoPedidoSelecionado = "";
 
 function selecionarTipo(tipo) {
     tipoPedidoSelecionado = tipo;
     document.getElementById("tipoPedido").value = tipo;
-
     const btnP = document.getElementById("btn-presencial");
     const btnO = document.getElementById("btn-online");
-
     btnP.classList.remove("ativo-presencial", "ativo-online");
     btnO.classList.remove("ativo-presencial", "ativo-online");
-
     if (tipo === "presencial") btnP.classList.add("ativo-presencial");
     if (tipo === "online")     btnO.classList.add("ativo-online");
 }
 
-// ─── Itens ───────────────────────────────────────────────
+// ─── Itens ────────────────────────────────────────────────
 let itemCount = 0;
 
 function criarItem() {
     itemCount++;
-    const n = itemCount;
+    const n   = itemCount;
     const div = document.createElement("div");
     div.classList.add("item-block");
     div.innerHTML = `
@@ -427,18 +297,9 @@ function criarItem() {
             </div>
         </div>
         <div class="item-grid">
-            <div class="form-group">
-                <label>Produto</label>
-                <input type="text" class="inp-prod" placeholder="Nome do produto" required>
-            </div>
-            <div class="form-group">
-                <label>Quantidade</label>
-                <input type="number" class="inp-qty" placeholder="0" min="0" required>
-            </div>
-            <div class="form-group">
-                <label>Valor Unit. (R$)</label>
-                <input type="number" class="inp-unit" step="0.01" placeholder="0,00" min="0" required>
-            </div>
+            <div class="form-group"><label>Produto</label><input type="text" class="inp-prod" placeholder="Nome do produto" required></div>
+            <div class="form-group"><label>Quantidade</label><input type="number" class="inp-qty" placeholder="0" min="0" required></div>
+            <div class="form-group"><label>Valor Unit. (R$)</label><input type="number" class="inp-unit" step="0.01" placeholder="0,00" min="0" required></div>
         </div>
     `;
     div.querySelector(".btn-excluir").addEventListener("click", () => { div.remove(); calcularResumo(); });
@@ -455,7 +316,7 @@ function criarItem() {
 document.getElementById("btnAddItem").addEventListener("click", criarItem);
 criarItem();
 
-// ─── Desconto ────────────────────────────────────────────
+// ─── Desconto ─────────────────────────────────────────────
 function onTipoDesconto() {
     const inp  = document.getElementById("valorDesconto");
     const tipo = document.getElementById("tipoDesconto").value;
@@ -464,10 +325,9 @@ function onTipoDesconto() {
     calcularResumo();
 }
 
-// ─── Cálculos ────────────────────────────────────────────
-function fmtBRL(v) {
-    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
+// ─── Cálculos ─────────────────────────────────────────────
+function fmtBRL(v) { return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
+
 function calcularSubtotal() {
     let t = 0;
     document.querySelectorAll(".item-block").forEach(b => {
@@ -476,6 +336,7 @@ function calcularSubtotal() {
     });
     return t;
 }
+
 function calcularResumo() {
     const subtotal = calcularSubtotal();
     const tipo = document.getElementById("tipoDesconto").value;
@@ -491,23 +352,19 @@ function calcularResumo() {
     document.getElementById("rTotal").textContent    = fmtBRL(total);
 
     const rowDesc = document.getElementById("rowDesc");
-    if (desc > 0) {
-        rowDesc.style.display = "flex";
-        document.getElementById("rDesconto").textContent = `- ${fmtBRL(desc)}`;
-    } else {
-        rowDesc.style.display = "none";
-    }
+    if (desc > 0) { rowDesc.style.display = "flex"; document.getElementById("rDesconto").textContent = `- ${fmtBRL(desc)}`; }
+    else rowDesc.style.display = "none";
 
     const rowSaldo   = document.getElementById("rowSaldo");
     const labelSaldo = document.getElementById("labelSaldo");
     const rSaldo     = document.getElementById("rSaldo");
     rowSaldo.className = "resumo-row";
-    if (saldo >= 0) { rowSaldo.classList.add("saldo");  labelSaldo.textContent = "Troco"; }
+    if (saldo >= 0) { rowSaldo.classList.add("saldo"); labelSaldo.textContent = "Troco"; }
     else            { rowSaldo.classList.add("devedor"); labelSaldo.textContent = "Saldo devedor"; }
     rSaldo.textContent = fmtBRL(Math.abs(saldo));
 }
 
-// ─── Toast ───────────────────────────────────────────────
+// ─── Toast ────────────────────────────────────────────────
 function showToast(msg, type = "success") {
     const t = document.createElement("div");
     t.className = `toast ${type}`;
@@ -516,10 +373,10 @@ function showToast(msg, type = "success") {
     setTimeout(() => t.remove(), 3500);
 }
 
-// ─── Reset ───────────────────────────────────────────────
+// ─── Reset ────────────────────────────────────────────────
 function resetForm() {
     document.getElementById("pedidoForm").reset();
-    document.getElementById("dataPedido").value = formatDisplay(hoje);
+    document.getElementById("dataPedido").value  = formatDisplay(hoje);
     document.getElementById("dataEntrega").value = formatDateLocal(entrega);
     document.getElementById("itensContainer").innerHTML = "";
     document.getElementById("valorDesconto").disabled = true;
@@ -529,15 +386,26 @@ function resetForm() {
     itemCount = 0;
     criarItem();
     calcularResumo();
+    carregarVendedores(); // recarrega select
 }
 
-// ─── Envio ───────────────────────────────────────────────
+// ─── Envio ────────────────────────────────────────────────
 document.getElementById("pedidoForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
     if (!tipoPedidoSelecionado) {
         showToast("⚠️ Selecione o tipo de pedido!", "error");
         document.getElementById("btn-presencial").scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
+
+    const vendedorEl = document.getElementById("seuNome");
+    const vendedor   = vendedorEl.tagName === 'SELECT'
+        ? vendedorEl.options[vendedorEl.selectedIndex]?.text || vendedorEl.value
+        : vendedorEl.value;
+
+    if (!vendedor || vendedor === '— Selecione o vendedor —') {
+        showToast("⚠️ Selecione um vendedor!", "error");
         return;
     }
 
@@ -558,18 +426,18 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
     });
 
     const pedido = {
-        vendedor:        document.getElementById("seuNome").value,
-        nomeCliente:     document.getElementById("nomeCliente").value,
+        vendedor,
+        nomeCliente    : document.getElementById("nomeCliente").value,
         telefoneCliente: document.getElementById("telefoneCliente").value,
-        tipoPedido:      tipoPedidoSelecionado,   // "presencial" ou "online"
+        tipoPedido     : tipoPedidoSelecionado,
         itens,
-        anotacoes:       document.getElementById("anotacoes").value,
-        dataPedido:      formatDateLocal(hoje),
-        dataEntrega:     document.getElementById("dataEntrega").value,
-        desconto:        desc,
-        valorTotal:      total,
-        valorRecebido:   parseFloat(document.getElementById("valorRecebido").value) || 0,
-        status:          "Aguardando Retorno"
+        anotacoes      : document.getElementById("anotacoes").value,
+        dataPedido     : formatDateLocal(hoje),
+        dataEntrega    : document.getElementById("dataEntrega").value,
+        desconto       : desc,
+        valorTotal     : total,
+        valorRecebido  : parseFloat(document.getElementById("valorRecebido").value) || 0,
+        status         : "Aguardando Retorno"
     };
 
     const btn = document.getElementById("btnEnviar");
@@ -578,17 +446,14 @@ document.getElementById("pedidoForm").addEventListener("submit", async function(
 
     try {
         const res  = await fetch("/api/pedidos", {
-            method: "POST",
+            method : "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(pedido)
+            credentials: 'include',
+            body   : JSON.stringify(pedido)
         });
         const data = await res.json();
-        if (res.ok) {
-            showToast("✅ Pedido cadastrado com sucesso!");
-            resetForm();
-        } else {
-            showToast("❌ Erro: " + data.error, "error");
-        }
+        if (res.ok) { showToast("✅ Pedido cadastrado com sucesso!"); resetForm(); }
+        else showToast("❌ Erro: " + data.error, "error");
     } catch(err) {
         showToast("❌ Erro de conexão: " + err.message, "error");
     } finally {

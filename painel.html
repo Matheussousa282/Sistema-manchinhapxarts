@@ -179,12 +179,7 @@ function abrirPagina(pagina, titulo, breadcrumb) {
 // ✅ Logout via API — apaga o cookie no servidor
 async function sair() {
   try {
-    await fetch('/api/login', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ logout: true })
-    });
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
   } finally {
     sessionStorage.clear();
     window.location.replace('login.html');

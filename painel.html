@@ -6,18 +6,10 @@
 <title>Mpx Arts — Painel</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!-- ✅ PROTEÇÃO DE SESSÃO -->
 <script>
-(async function protegerPagina() {
-  try {
-    const res  = await fetch('/api/me', { credentials: 'include' });
-    const data = await res.json();
-    if (!res.ok || !data.ok) { window.location.replace('login.html'); return; }
-    sessionStorage.setItem('isLoggedIn',    'true');
-    sessionStorage.setItem('usuarioLogado', data.usuario);
-    sessionStorage.setItem('nivelAcesso',   data.nivel);
-  } catch { window.location.replace('login.html'); }
-})();
+if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+  window.location.replace('login.html');
+}
 </script>
 
 <style>
@@ -176,14 +168,13 @@ function abrirPagina(pagina, titulo, breadcrumb) {
   }
 }
 
-// ✅ Logout via API — apaga o cookie no servidor
+// ✅ Logout
 async function sair() {
   try {
     await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-  } finally {
-    sessionStorage.clear();
-    window.location.replace('login.html');
-  }
+  } catch {}
+  sessionStorage.clear();
+  window.location.replace('login.html');
 }
 </script>
 </body>

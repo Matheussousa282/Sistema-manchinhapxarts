@@ -3,263 +3,435 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚙️ Configurações</title>
+<title>⚙️ Configurações — Mpx Arts</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2f7fb3;--primary-h:#25658d;--success:#28a745;--danger:#dc3545;--gray:#333;--border:#dde3ee;--light:#f4f7fb;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:"Segoe UI",Arial,sans-serif;background:var(--light);min-height:100vh;padding:28px 16px 60px;}
-.page-header{max-width:900px;margin:0 auto 24px;}
-.page-header h1{font-size:22px;font-weight:800;color:var(--primary);}
-.page-header p{font-size:13px;color:#888;margin-top:4px;}
+:root {
+  --primary: #3b82f6;
+  --primary-dim: rgba(59,130,246,0.1);
+  --success: #22c55e;
+  --success-dim: rgba(34,197,94,0.1);
+  --danger: #ef4444;
+  --danger-dim: rgba(239,68,68,0.1);
+  --warning: #f59e0b;
+  --warning-dim: rgba(245,158,11,0.1);
+  --bg: #f1f4f9;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --text-xs: #94a3b8;
+  --font: 'Outfit', sans-serif;
+  --radius: 12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); min-height: 100vh; color: var(--text); }
 
-.tabs{display:flex;gap:4px;max-width:900px;margin:0 auto 20px;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid var(--border);}
-.tab-btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#888;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.tab-btn:hover{background:#f0f4f8;color:var(--gray);}
-.tab-btn.ativo{background:var(--primary);color:#fff;}
+/* Page header */
+.page-wrap { max-width: 940px; margin: 0 auto; padding: 28px 20px 60px; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 {
+  font-size: 24px; font-weight: 800; color: var(--text);
+  letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 10px;
+}
+.page-header p { font-size: 13.5px; color: var(--text-muted); margin-top: 5px; }
 
-.tab-content{display:none;max-width:900px;margin:0 auto;}
-.tab-content.ativo{display:block;}
+/* Tab nav */
+.tab-nav {
+  display: flex; gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 5px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.tab-btn {
+  flex: 1; padding: 10px 14px;
+  border: none; border-radius: 10px;
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  cursor: pointer; background: transparent; color: var(--text-muted);
+  transition: all 0.18s ease;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.tab-btn:hover { background: var(--surface2); color: var(--text); }
+.tab-btn.active {
+  background: var(--primary); color: #fff;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
 
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-@media(max-width:600px){.grid-2{grid-template-columns:1fr;}}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 
-.box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid var(--border);margin-bottom:16px;}
-.box-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
-.box-title::after{content:'';flex:1;height:1px;background:var(--border);}
+/* Layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:640px){ .two-col { grid-template-columns: 1fr; } }
 
-/* Tags lista */
-.tags-list{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;margin-bottom:14px;padding:10px;background:#f7f9ff;border-radius:8px;border:1px solid var(--border);}
-.tag-item{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#fff;border:1.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:600;color:var(--gray);}
-.tag-item .del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;line-height:1;padding:0 0 0 2px;transition:color 0.2s;}
-.tag-item .del:hover{color:var(--danger);}
-.tag-vazio{color:#bbb;font-size:13px;font-style:italic;align-self:center;}
+/* Box */
+.box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  margin-bottom: 16px;
+}
+.box-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.box-title {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--primary);
+  display: flex; align-items: center; gap: 7px;
+}
+.box-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-.add-row{display:flex;gap:8px;}
-.add-row input{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;transition:border-color 0.2s;}
-.add-row input:focus{border-color:var(--primary);}
-.btn-add{padding:9px 18px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:background 0.2s;white-space:nowrap;}
-.btn-add:hover{background:var(--primary-h);}
+/* Chip tags */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 38px; margin-bottom: 16px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  transition: all 0.15s;
+}
+.chip.fixed { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); cursor: default; }
+.chip.custom { cursor: default; }
+.chip .rm {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-xs); font-size: 15px; line-height: 1;
+  padding: 0 0 0 2px; border-radius: 4px;
+  transition: color 0.15s;
+}
+.chip .rm:hover { color: var(--danger); }
+.chips-empty { color: var(--text-xs); font-size: 13px; font-style: italic; align-self: center; }
+
+/* Add row */
+.add-row { display: flex; gap: 8px; }
+.add-row input {
+  flex: 1; padding: 10px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  font-family: var(--font); font-size: 14px; color: var(--text);
+  background: var(--surface2);
+  outline: none; transition: border-color 0.18s, box-shadow 0.18s;
+}
+.add-row input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-dim); background: #fff; }
+.btn-add {
+  padding: 10px 18px; background: var(--primary); color: #fff;
+  border: none; border-radius: 9px;
+  font-family: var(--font); font-size: 13px; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.25);
+}
+.btn-add:hover { background: #2563eb; }
+.btn-add:active { transform: scale(0.97); }
+
+/* Info box */
+.info-box {
+  padding: 12px 16px;
+  background: var(--warning-dim);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 9px;
+  font-size: 13px; color: #92400e;
+  margin-bottom: 16px;
+  display: flex; gap: 8px; align-items: flex-start;
+}
 
 /* Permissões */
-.user-perm-card{background:#f7f9ff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
-.upc-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.upc-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#4aa3df);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0;}
-.upc-info .uname{font-size:14px;font-weight:700;color:var(--gray);}
-.upc-info .ulevel{font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:0.6px;}
-.perms-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.perm-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#fff;border-radius:8px;border:1px solid var(--border);}
-.perm-label{font-size:13px;font-weight:600;color:var(--gray);}
-.perm-sub{font-size:11px;color:#aaa;}
-/* Toggle */
-.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
-.toggle input{opacity:0;width:0;height:0;}
-.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:20px;cursor:pointer;transition:background 0.2s;}
-.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
-.toggle input:checked+.toggle-slider{background:var(--success);}
-.toggle input:checked+.toggle-slider::before{transform:translateX(18px);}
+.perm-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.perm-user-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.perm-av {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #93c5fd);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+.perm-user-info .pname { font-size: 15px; font-weight: 700; color: var(--text); }
+.perm-user-info .plevel {
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-top: 2px;
+}
+.perm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+@media(max-width:500px){ .perm-grid { grid-template-columns: 1fr; } }
 
-.btn-salvar-perms{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:12px;}
-.btn-salvar-perms:hover{background:#218838;}
+.perm-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  gap: 8px;
+}
+.perm-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.perm-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
-.toast{position:fixed;bottom:22px;right:22px;background:#fff;border-left:4px solid var(--success);border-radius:8px;padding:13px 18px;font-size:14px;font-weight:600;color:var(--gray);box-shadow:0 6px 24px rgba(0,0,0,0.15);z-index:9999;animation:toastIn 0.3s ease;max-width:280px;}
-.toast.error{border-color:var(--danger);}
-@keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+/* Toggle switch */
+.toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.tslider {
+  position: absolute; inset: 0;
+  background: #cbd5e1; border-radius: 20px;
+  cursor: pointer; transition: background 0.2s;
+}
+.tslider::before {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 3px; top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle input:checked + .tslider { background: var(--success); }
+.toggle input:checked + .tslider::before { transform: translateX(18px); }
+
+.btn-save-perms {
+  width: 100%; padding: 11px;
+  background: var(--success); color: #fff;
+  border: none; border-radius: 9px;
+  font-family: var(--font); font-size: 13.5px; font-weight: 700;
+  cursor: pointer; transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+}
+.btn-save-perms:hover { background: #16a34a; }
+.btn-save-perms:active { transform: scale(0.98); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 22px; right: 22px;
+  background: #fff; border-left: 4px solid var(--success);
+  border-radius: 10px; padding: 13px 18px;
+  font-size: 14px; font-weight: 600; color: var(--text);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  z-index: 9999; max-width: 300px;
+  animation: tIn 0.25s ease;
+}
+.toast.err { border-color: var(--danger); }
+@keyframes tIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
 </style>
 </head>
 <body>
+<div class="page-wrap">
+  <div class="page-header">
+    <h1>⚙️ Configurações</h1>
+    <p>Gerencie formas de pagamento, bandeiras de cartão e permissões de acesso.</p>
+  </div>
 
-<div class="page-header">
-  <h1>⚙️ Configurações</h1>
-  <p>Gerencie formas de pagamento, bandeiras de cartão e permissões de acesso por usuário.</p>
-</div>
+  <!-- Tab nav -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="tab('pagamento',this)">💳 Formas de Pagamento</button>
+    <button class="tab-btn" onclick="tab('bandeiras',this)">🏦 Bandeiras / Operadoras</button>
+    <button class="tab-btn" onclick="tab('permissoes',this)">🔐 Permissões de Acesso</button>
+  </div>
 
-<!-- Abas -->
-<div class="tabs">
-  <button class="tab-btn ativo" onclick="mudarTab('pagamento',this)">💳 Formas de Pagamento</button>
-  <button class="tab-btn" onclick="mudarTab('bandeiras',this)">🏦 Bandeiras / Operadoras</button>
-  <button class="tab-btn" onclick="mudarTab('permissoes',this)">🔐 Permissões de Acesso</button>
-</div>
-
-<!-- Aba: Formas de Pagamento -->
-<div class="tab-content ativo" id="tab-pagamento">
-  <div class="grid-2">
-    <div class="box">
-      <div class="box-title">Formas Padrão (sempre ativas)</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        <span class="tag-item" style="border-color:#28a745;color:#155724;">💵 Dinheiro</span>
-        <span class="tag-item" style="border-color:#2f7fb3;color:#004085;">📲 Pix</span>
-        <span class="tag-item" style="border-color:#6f42c1;color:#4a148c;">💳 Cartão</span>
+  <!-- Pagamento -->
+  <div class="tab-panel active" id="panel-pagamento">
+    <div class="two-col">
+      <div class="box">
+        <div class="box-title">Formas padrão (fixas)</div>
+        <div class="chips">
+          <span class="chip fixed">💵 Dinheiro</span>
+          <span class="chip fixed">📲 Pix</span>
+          <span class="chip fixed">💳 Cartão</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-xs)">Estas formas não podem ser removidas.</p>
       </div>
-    </div>
-    <div class="box">
-      <div class="box-title">Formas Personalizadas</div>
-      <div class="tags-list" id="listaFormas">
-        <span class="tag-vazio">Nenhuma forma adicionada.</span>
-      </div>
-      <div class="add-row">
-        <input type="text" id="novaForma" placeholder="Ex: Boleto, Cheque, Financiamento..." maxlength="40">
-        <button class="btn-add" onclick="adicionarForma()">+ Adicionar</button>
+      <div class="box">
+        <div class="box-title">Formas personalizadas</div>
+        <div class="chips" id="formasChips"></div>
+        <div class="add-row">
+          <input type="text" id="inpForma" placeholder="Ex: Boleto, Cheque, Financiamento..." maxlength="40">
+          <button class="btn-add" onclick="addForma()">+ Adicionar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Aba: Bandeiras -->
-<div class="tab-content" id="tab-bandeiras">
-  <div class="grid-2">
-    <div class="box">
-      <div class="box-title">Bandeiras Padrão (sempre ativas)</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        <span class="tag-item">Visa</span>
-        <span class="tag-item">Master</span>
-        <span class="tag-item">Elo</span>
-        <span class="tag-item">Amex</span>
-        <span class="tag-item">Hipercard</span>
+  <!-- Bandeiras -->
+  <div class="tab-panel" id="panel-bandeiras">
+    <div class="two-col">
+      <div class="box">
+        <div class="box-title">Bandeiras padrão (fixas)</div>
+        <div class="chips">
+          <span class="chip fixed">Visa</span>
+          <span class="chip fixed">Mastercard</span>
+          <span class="chip fixed">Elo</span>
+          <span class="chip fixed">Amex</span>
+          <span class="chip fixed">Hipercard</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-xs)">Estas bandeiras não podem ser removidas.</p>
       </div>
-    </div>
-    <div class="box">
-      <div class="box-title">Bandeiras / Operadoras Personalizadas</div>
-      <div class="tags-list" id="listaBandeiras">
-        <span class="tag-vazio">Nenhuma bandeira adicionada.</span>
-      </div>
-      <div class="add-row">
-        <input type="text" id="novaBandeira" placeholder="Ex: Sodexo, VR, Ticket, Cabal..." maxlength="40">
-        <button class="btn-add" onclick="adicionarBandeira()">+ Adicionar</button>
+      <div class="box">
+        <div class="box-title">Bandeiras / Operadoras personalizadas</div>
+        <div class="chips" id="bandeirasChips"></div>
+        <div class="add-row">
+          <input type="text" id="inpBandeira" placeholder="Ex: Sodexo, VR, Ticket, Cabal..." maxlength="40">
+          <button class="btn-add" onclick="addBandeira()">+ Adicionar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Aba: Permissões -->
-<div class="tab-content" id="tab-permissoes">
-  <div class="box" style="margin-bottom:12px;background:#fff3cd;border-color:#ffc107;">
-    <p style="font-size:13px;color:#856404;">⚠️ Admins sempre têm acesso total. As permissões abaixo se aplicam apenas aos usuários com nível <strong>vendedor</strong>.</p>
-  </div>
-  <div id="listaPermissoes">
-    <p style="text-align:center;color:#bbb;padding:20px;font-size:13px;">Carregando usuários...</p>
+  <!-- Permissões -->
+  <div class="tab-panel" id="panel-permissoes">
+    <div class="info-box">
+      ⚠️ Admins sempre têm acesso total. Estas permissões se aplicam apenas a usuários <strong>vendedor</strong>.
+    </div>
+    <div id="permsContainer">
+      <p style="text-align:center;color:var(--text-xs);padding:24px;font-size:13px;">Carregando usuários...</p>
+    </div>
   </div>
 </div>
 
 <script>
-function showToast(msg,type='success'){const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
-
-// ── Abas ───────────────────────────────────────────────────
-function mudarTab(id,el){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('ativo'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('ativo'));
-  document.getElementById('tab-'+id).classList.add('ativo');
-  el.classList.add('ativo');
-  if(id==='permissoes')carregarPermissoes();
+function toast(msg, type='') {
+  const t = document.createElement('div');
+  t.className = `toast${type?' '+type:''}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
 }
 
-// ── Formas de Pagamento ────────────────────────────────────
-function getFormas(){return JSON.parse(localStorage.getItem('config_formas')||'[]');}
-function salvarFormas(list){localStorage.setItem('config_formas',JSON.stringify(list));}
-
-function renderFormas(){
-  const list=getFormas();
-  const cont=document.getElementById('listaFormas');
-  if(!list.length){cont.innerHTML='<span class="tag-vazio">Nenhuma forma adicionada.</span>';return;}
-  cont.innerHTML=list.map((f,i)=>`<span class="tag-item">💰 ${f}<button class="del" onclick="removerForma(${i})">×</button></span>`).join('');
+// ── Abas ──────────────────────────────────────────────────
+function tab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  el.classList.add('active');
+  if(id === 'permissoes') loadPerms();
 }
 
-function adicionarForma(){
-  const inp=document.getElementById('novaForma');
-  const val=inp.value.trim();
-  if(!val){showToast('Digite o nome da forma!','error');return;}
-  const list=getFormas();
-  if(list.includes(val)){showToast('Forma já cadastrada!','error');return;}
-  list.push(val);salvarFormas(list);inp.value='';renderFormas();
-  showToast('✅ Forma adicionada!');
-}
+// ── Formas de pagamento ────────────────────────────────────
+function gF() { return JSON.parse(localStorage.getItem('config_formas') || '[]'); }
+function sF(l) { localStorage.setItem('config_formas', JSON.stringify(l)); }
 
-function removerForma(idx){
-  const list=getFormas();list.splice(idx,1);salvarFormas(list);renderFormas();
+function renderFormas() {
+  const l = gF(), c = document.getElementById('formasChips');
+  if(!l.length) { c.innerHTML = '<span class="chips-empty">Nenhuma forma adicionada.</span>'; return; }
+  c.innerHTML = l.map((f,i) => `<span class="chip custom">💰 ${f}<button class="rm" onclick="rmForma(${i})">×</button></span>`).join('');
 }
+function addForma() {
+  const inp = document.getElementById('inpForma');
+  const v = inp.value.trim();
+  if(!v) { toast('Digite o nome da forma!', 'err'); return; }
+  const l = gF();
+  if(l.includes(v)) { toast('Forma já cadastrada!', 'err'); return; }
+  l.push(v); sF(l); inp.value = ''; renderFormas();
+  toast('✅ Forma adicionada!');
+}
+function rmForma(i) { const l=gF(); l.splice(i,1); sF(l); renderFormas(); }
 
 // ── Bandeiras ──────────────────────────────────────────────
-function getBandeiras(){return JSON.parse(localStorage.getItem('config_bandeiras')||'[]');}
-function salvarBandeiras(list){localStorage.setItem('config_bandeiras',JSON.stringify(list));}
+function gB() { return JSON.parse(localStorage.getItem('config_bandeiras') || '[]'); }
+function sB(l) { localStorage.setItem('config_bandeiras', JSON.stringify(l)); }
 
-function renderBandeiras(){
-  const list=getBandeiras();
-  const cont=document.getElementById('listaBandeiras');
-  if(!list.length){cont.innerHTML='<span class="tag-vazio">Nenhuma bandeira adicionada.</span>';return;}
-  cont.innerHTML=list.map((b,i)=>`<span class="tag-item">🏦 ${b}<button class="del" onclick="removerBandeira(${i})">×</button></span>`).join('');
+function renderBandeiras() {
+  const l = gB(), c = document.getElementById('bandeirasChips');
+  if(!l.length) { c.innerHTML = '<span class="chips-empty">Nenhuma bandeira adicionada.</span>'; return; }
+  c.innerHTML = l.map((b,i) => `<span class="chip custom">🏦 ${b}<button class="rm" onclick="rmBandeira(${i})">×</button></span>`).join('');
 }
-
-function adicionarBandeira(){
-  const inp=document.getElementById('novaBandeira');
-  const val=inp.value.trim();
-  if(!val){showToast('Digite o nome da bandeira!','error');return;}
-  const list=getBandeiras();
-  if(list.includes(val)){showToast('Bandeira já cadastrada!','error');return;}
-  list.push(val);salvarBandeiras(list);inp.value='';renderBandeiras();
-  showToast('✅ Bandeira adicionada!');
+function addBandeira() {
+  const inp = document.getElementById('inpBandeira');
+  const v = inp.value.trim();
+  if(!v) { toast('Digite o nome da bandeira!', 'err'); return; }
+  const l = gB();
+  if(l.includes(v)) { toast('Bandeira já cadastrada!', 'err'); return; }
+  l.push(v); sB(l); inp.value = ''; renderBandeiras();
+  toast('✅ Bandeira adicionada!');
 }
-
-function removerBandeira(idx){
-  const list=getBandeiras();list.splice(idx,1);salvarBandeiras(list);renderBandeiras();
-}
+function rmBandeira(i) { const l=gB(); l.splice(i,1); sB(l); renderBandeiras(); }
 
 // ── Permissões ─────────────────────────────────────────────
-const permissoesPossiveis=[
-  {id:'ver_faturamento',   label:'Ver Faturamento',    sub:'Cards de faturamento e desconto'},
-  {id:'ver_tipo_pedido',   label:'Ver Tipo de Pedido', sub:'Gráficos presencial/online'},
-  {id:'ver_caixa',         label:'Ver Caixa',          sub:'Controle de caixa do dia'},
-  {id:'ver_descontos',     label:'Ver Descontos',       sub:'Painel de descontos aplicados'},
-  {id:'editar_pedidos',    label:'Editar Pedidos',      sub:'Botão editar na tabela'},
-  {id:'remover_pedidos',   label:'Remover Pedidos',     sub:'Botão remover na tabela'},
-  {id:'fazer_recebimento', label:'Fazer Recebimento',   sub:'Botão receber na tabela'},
+const PERMS = [
+  { id:'ver_faturamento',    label:'Ver Faturamento',     sub:'Cards de receita e descontos' },
+  { id:'ver_tipo_pedido',    label:'Ver Tipo de Pedido',  sub:'Gráfico presencial × online' },
+  { id:'ver_caixa',          label:'Ver Caixa',           sub:'Controle de caixa do dia' },
+  { id:'ver_descontos',      label:'Ver Descontos',        sub:'Painel de descontos aplicados' },
+  { id:'editar_pedidos',     label:'Editar Pedidos',       sub:'Botão editar na tabela' },
+  { id:'remover_pedidos',    label:'Remover Pedidos',      sub:'Botão remover na tabela' },
+  { id:'fazer_recebimento',  label:'Fazer Recebimento',    sub:'Botão receber na tabela' },
 ];
 
-async function carregarPermissoes(){
-  const cont=document.getElementById('listaPermissoes');
-  try{
-    const res=await fetch('/api/usuarios');
-    const usuarios=await res.json();
-    const vendedores=usuarios.filter(u=>u.nivel!=='admin');
-    if(!vendedores.length){cont.innerHTML='<p style="text-align:center;color:#bbb;padding:20px;font-size:13px;">Nenhum vendedor cadastrado.</p>';return;}
-    cont.innerHTML=vendedores.map(u=>{
-      const perms=JSON.parse(localStorage.getItem(`perms_${u.id}`)||'{}');
-      return`<div class="user-perm-card">
-        <div class="upc-header">
-          <div class="upc-avatar">${u.usuario.charAt(0).toUpperCase()}</div>
-          <div class="upc-info"><div class="uname">${u.usuario}</div><div class="ulevel">Vendedor</div></div>
-        </div>
-        <div class="perms-grid">
-          ${permissoesPossiveis.map(p=>`
-            <div class="perm-row">
-              <div><div class="perm-label">${p.label}</div><div class="perm-sub">${p.sub}</div></div>
-              <label class="toggle">
-                <input type="checkbox" id="perm_${u.id}_${p.id}" ${perms[p.id]!==false?'checked':''}>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>`).join('')}
-        </div>
-        <button class="btn-salvar-perms" onclick="salvarPermissoes(${u.id},'${u.usuario}')">💾 Salvar Permissões de ${u.usuario}</button>
-      </div>`;
+async function loadPerms() {
+  const c = document.getElementById('permsContainer');
+  try {
+    const res  = await fetch('/api/usuarios');
+    const list = await res.json();
+    const vend = list.filter(u => u.nivel !== 'admin');
+    if(!vend.length) {
+      c.innerHTML = '<p style="text-align:center;color:var(--text-xs);padding:24px;font-size:13px;">Nenhum vendedor cadastrado.</p>';
+      return;
+    }
+    c.innerHTML = vend.map(u => {
+      const ps = JSON.parse(localStorage.getItem(`perms_${u.id}`) || '{}');
+      return `
+        <div class="perm-card">
+          <div class="perm-user-row">
+            <div class="perm-av">${u.usuario.charAt(0).toUpperCase()}</div>
+            <div class="perm-user-info">
+              <div class="pname">${u.usuario}</div>
+              <div class="plevel">Vendedor</div>
+            </div>
+          </div>
+          <div class="perm-grid">
+            ${PERMS.map(p => `
+              <div class="perm-row">
+                <div>
+                  <div class="perm-label">${p.label}</div>
+                  <div class="perm-sub">${p.sub}</div>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="p_${u.id}_${p.id}" ${ps[p.id]!==false?'checked':''}>
+                  <span class="tslider"></span>
+                </label>
+              </div>`).join('')}
+          </div>
+          <button class="btn-save-perms" onclick="savePerms(${u.id},'${u.usuario}')">
+            💾 Salvar permissões de ${u.usuario}
+          </button>
+        </div>`;
     }).join('');
-  }catch(e){cont.innerHTML='<p style="color:#dc3545;font-size:13px;text-align:center;padding:20px;">Erro ao carregar usuários.</p>';}
+  } catch(e) {
+    c.innerHTML = '<p style="color:var(--danger);font-size:13px;text-align:center;padding:20px;">Erro ao carregar usuários.</p>';
+  }
 }
 
-function salvarPermissoes(userId,nome){
-  const perms={};
-  permissoesPossiveis.forEach(p=>{
-    const el=document.getElementById(`perm_${userId}_${p.id}`);
-    if(el)perms[p.id]=el.checked;
+function savePerms(uid, nome) {
+  const ps = {};
+  PERMS.forEach(p => {
+    const el = document.getElementById(`p_${uid}_${p.id}`);
+    if(el) ps[p.id] = el.checked;
   });
-  localStorage.setItem(`perms_${userId}`,JSON.stringify(perms));
-  showToast(`✅ Permissões de ${nome} salvas!`);
+  localStorage.setItem(`perms_${uid}`, JSON.stringify(ps));
+  toast(`✅ Permissões de ${nome} salvas!`);
 }
 
 // Init
-renderFormas();
-renderBandeiras();
-
-// Enter nos inputs
-document.getElementById('novaForma').addEventListener('keydown',e=>{if(e.key==='Enter')adicionarForma();});
-document.getElementById('novaBandeira').addEventListener('keydown',e=>{if(e.key==='Enter')adicionarBandeira();});
+renderFormas(); renderBandeiras();
+document.getElementById('inpForma').addEventListener('keydown', e => { if(e.key === 'Enter') addForma(); });
+document.getElementById('inpBandeira').addEventListener('keydown', e => { if(e.key === 'Enter') addBandeira(); });
 </script>
 </body>
 </html>

@@ -3,268 +3,300 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mpx Arts — Login</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Mpx Arts — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#0a0a0a;
-  overflow:hidden;
-  font-family:'DM Sans',sans-serif;
+:root {
+  --accent: #f5c842;
+  --accent2: #e8a820;
+  --bg: #08080d;
+  --surface: rgba(18,18,26,0.95);
+  --border: rgba(245,200,66,0.15);
+  --text: #f0f0f4;
+  --muted: rgba(245,200,66,0.35);
+  --font: 'Outfit', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
 }
 
-/* Partículas */
-.particles{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-.particle{position:absolute;border-radius:50%;animation:floatUp linear infinite;}
-@keyframes floatUp{
-  0%  {transform:translateY(110vh) scale(0);opacity:0;}
-  20% {opacity:1;}
-  80% {opacity:0.6;}
-  100%{transform:translateY(-10vh) scale(1.2) translateX(40px);opacity:0;}
+/* Background atmosphere */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(245,200,66,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(79,158,255,0.05) 0%, transparent 50%),
+    #08080d;
 }
 
-/* Fundo grade */
-body::before{
-  content:'';
-  position:fixed;inset:0;
+/* Grid */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
   background-image:
-    linear-gradient(rgba(255,230,0,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,230,0,0.04) 1px,transparent 1px);
-  background-size:50px 50px;
-  z-index:0;
+    linear-gradient(rgba(245,200,66,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
 
-/* Card principal */
-.card{
-  position:relative;
-  z-index:1;
-  width:420px;
-  background:rgba(10,10,10,0.92);
-  border:1px solid rgba(255,230,0,0.3);
-  border-radius:20px;
-  padding:48px 40px 40px;
-  box-shadow:
-    0 0 40px rgba(255,220,0,0.15),
-    0 24px 60px rgba(0,0,0,0.6);
-  animation:fadeSlide 0.7s cubic-bezier(.23,1,.32,1) both;
+/* Particles */
+.particles { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.p { position: absolute; border-radius: 50%; animation: rise linear infinite; }
+@keyframes rise {
+  0%   { transform: translateY(110vh) scale(0.5); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 0.7; }
+  100% { transform: translateY(-8vh) translateX(30px) scale(1.3); opacity: 0; }
 }
-@keyframes fadeSlide{
-  from{opacity:0;transform:translateY(24px);}
-  to  {opacity:1;transform:translateY(0);}
+
+/* Card */
+.card {
+  position: relative; z-index: 1;
+  width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 44px 40px 36px;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(245,200,66,0.06),
+    0 32px 80px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* Logo */
-.logo{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin-bottom:36px;
-  gap:10px;
+.logo { text-align: center; margin-bottom: 36px; }
+.logo-mark {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 14px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 22px; color: #000;
+  margin-bottom: 14px;
+  box-shadow: 0 0 32px rgba(245,200,66,0.3), 0 8px 24px rgba(0,0,0,0.4);
 }
-.logo-mark{
-  width:60px;height:60px;
-  background:linear-gradient(135deg,#ffe600,#ffb300);
-  border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;
-  font-weight:800;font-size:24px;color:#000;
-  box-shadow:0 0 20px rgba(255,220,0,0.4);
+.logo-name {
+  display: block;
+  font-size: 22px; font-weight: 700; color: var(--text);
+  letter-spacing: -0.5px; margin-bottom: 4px;
 }
-.logo-name{
-  font-family:'Syne',sans-serif;
-  font-size:22px;font-weight:800;
-  color:#ffe600;
-  letter-spacing:1px;
-  text-shadow:0 0 20px rgba(255,220,0,0.4);
-}
-.logo-sub{
-  font-size:12px;color:#666;
-  letter-spacing:2px;text-transform:uppercase;
+.logo-sub {
+  display: block;
+  font-size: 11px; color: rgba(255,255,255,0.25);
+  letter-spacing: 2px; text-transform: uppercase;
 }
 
-/* Inputs */
-.field{position:relative;margin-bottom:18px;}
-.field label{
-  display:block;font-size:11px;font-weight:600;
-  letter-spacing:1px;text-transform:uppercase;
-  color:#666;margin-bottom:8px;
-}
-.field .icon{
-  position:absolute;left:14px;bottom:12px;
-  color:#ffe600;font-size:15px;
-  text-shadow:0 0 8px rgba(255,220,0,0.5);
-  pointer-events:none;
-}
-.field input{
-  width:100%;
-  padding:13px 14px 13px 42px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,230,0,0.2);
-  border-radius:10px;
-  color:#fff;font-size:15px;
-  font-family:'DM Sans',sans-serif;
-  outline:none;
-  transition:border-color 0.25s,box-shadow 0.25s,background 0.25s;
-}
-.field input::placeholder{color:rgba(255,220,0,0.3);font-size:14px;}
-.field input:focus{
-  border-color:#ffe600;
-  background:rgba(255,220,0,0.05);
-  box-shadow:0 0 0 3px rgba(255,220,0,0.1);
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,200,66,0.2), transparent);
+  margin-bottom: 28px;
 }
 
-/* Botão */
-.btn-login{
-  width:100%;margin-top:6px;
-  padding:15px;
-  background:linear-gradient(135deg,#ffe600,#ffb300);
-  border:none;border-radius:10px;
-  color:#000;font-size:16px;font-weight:700;
-  font-family:'DM Sans',sans-serif;
-  cursor:pointer;
-  transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;
-  box-shadow:0 4px 20px rgba(255,200,0,0.3);
-  letter-spacing:0.3px;
+/* Field */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 8px;
 }
-.btn-login:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 30px rgba(255,200,0,0.45);
+.field-wrap { position: relative; }
+.field-wrap .icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--accent); font-size: 14px; opacity: 0.7;
+  pointer-events: none;
+  transition: opacity 0.2s;
 }
-.btn-login:active{transform:translateY(0);}
-.btn-login.loading{opacity:0.7;pointer-events:none;}
-.btn-login.loading::after{
-  content:'';display:inline-block;
-  width:14px;height:14px;
-  border:2px solid #000;border-top-color:transparent;
-  border-radius:50%;
-  animation:spin 0.7s linear infinite;
-  margin-left:10px;vertical-align:middle;
+.field-wrap input {
+  width: 100%;
+  padding: 13px 14px 13px 42px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14.5px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
 }
-@keyframes spin{to{transform:rotate(360deg);}}
+.field-wrap input::placeholder { color: rgba(255,255,255,0.18); font-weight: 400; }
+.field-wrap input:focus {
+  border-color: rgba(245,200,66,0.4);
+  background: rgba(245,200,66,0.03);
+  box-shadow: 0 0 0 4px rgba(245,200,66,0.08);
+}
+.field-wrap input:focus + .icon { opacity: 1; }
 
-/* Erro */
-.erro{
-  margin-top:16px;padding:12px 16px;
-  background:rgba(220,53,69,0.12);
-  border:1px solid rgba(220,53,69,0.3);
-  border-radius:8px;
-  color:#ff6b78;font-size:13px;font-weight:600;
-  text-align:center;display:none;
-  animation:shake 0.3s ease;
+/* Button */
+.btn-login {
+  width: 100%; margin-top: 8px;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  border: none; border-radius: 10px;
+  color: #000; font-family: var(--font);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.2px;
+  transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+  box-shadow: 0 6px 24px rgba(245,200,66,0.3);
+  position: relative; overflow: hidden;
 }
-@keyframes shake{
-  0%,100%{transform:translateX(0);}
-  25%{transform:translateX(-6px);}
-  75%{transform:translateX(6px);}
+.btn-login::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+.btn-login:hover { transform: translateY(-1px); box-shadow: 0 10px 32px rgba(245,200,66,0.4); }
+.btn-login:active { transform: translateY(0); }
+.btn-login.loading { opacity: 0.75; pointer-events: none; }
+.btn-login.loading::before {
+  content: '';
+  display: inline-block;
+  width: 15px; height: 15px;
+  border: 2px solid rgba(0,0,0,0.4); border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 10px; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Error */
+.err {
+  margin-top: 14px;
+  padding: 11px 14px;
+  background: rgba(255,92,92,0.08);
+  border: 1px solid rgba(255,92,92,0.2);
+  border-radius: 8px;
+  color: #ff8080;
+  font-size: 13px; font-weight: 500;
+  text-align: center;
+  display: none;
+  animation: shake 0.35s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
 }
 
-/* Rodapé */
-.card-footer{
-  margin-top:28px;text-align:center;
-  font-size:11px;color:#333;
-  letter-spacing:0.5px;
+/* Footer */
+.card-foot {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 11px; color: rgba(255,255,255,0.15);
+  letter-spacing: 0.3px;
 }
-.card-footer strong{color:#555;}
 
-@media(max-width:460px){
-  .card{width:94%;padding:36px 24px 28px;}
+@media (max-width: 460px) {
+  .card { width: 94%; padding: 36px 24px 28px; }
 }
 </style>
 </head>
 <body>
-
-<div class="particles" id="particles"></div>
+<div class="bg-layer"></div>
+<div class="bg-grid"></div>
+<div class="particles" id="pts"></div>
 
 <div class="card">
   <div class="logo">
     <div class="logo-mark">MP</div>
-    <div class="logo-name">Mpx Arts</div>
-    <div class="logo-sub">Sistema de Vendas</div>
+    <span class="logo-name">Mpx Arts</span>
+    <span class="logo-sub">Sistema de Vendas</span>
   </div>
+  <div class="divider"></div>
 
-  <form id="loginForm">
+  <form id="loginForm" autocomplete="on">
     <div class="field">
       <label for="username">Usuário</label>
-      <i class="fa fa-user icon"></i>
-      <input type="text" id="username" placeholder="Digite seu usuário" required autocomplete="username">
+      <div class="field-wrap">
+        <input type="text" id="username" placeholder="Digite seu usuário" required autocomplete="username">
+        <i class="fa fa-user icon"></i>
+      </div>
     </div>
     <div class="field">
       <label for="password">Senha</label>
-      <i class="fa fa-lock icon"></i>
-      <input type="password" id="password" placeholder="Digite sua senha" required autocomplete="current-password">
+      <div class="field-wrap">
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+        <i class="fa fa-lock icon"></i>
+      </div>
     </div>
-    <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
-    <div class="erro" id="msgErro">⚠️ Usuário ou senha incorretos!</div>
+    <button type="submit" class="btn-login" id="btnLogin">Entrar no Sistema</button>
+    <div class="err" id="errMsg">⚠️ Usuário ou senha incorretos!</div>
   </form>
 
-  <div class="card-footer">
-    Desenvolvido por <strong>MTScomputadores</strong>
-  </div>
+  <div class="card-foot">Desenvolvido por <strong style="color:rgba(255,255,255,0.3)">MTScomputadores</strong></div>
 </div>
 
 <script>
-// ── Partículas ─────────────────────────────────────────
-const pc = document.getElementById('particles');
-for(let i=0;i<55;i++){
-  const p = document.createElement('div');
-  p.classList.add('particle');
-  const size = Math.random()*5+3;
-  p.style.cssText = `
+// Partículas
+const pts = document.getElementById('pts');
+for(let i = 0; i < 50; i++) {
+  const el = document.createElement('div');
+  el.className = 'p';
+  const s = Math.random() * 5 + 2;
+  const hue = Math.random() > 0.5 ? `rgba(245,${180+Math.floor(Math.random()*50)},50,` : `rgba(79,${120+Math.floor(Math.random()*80)},255,`;
+  el.style.cssText = `
     left:${Math.random()*100}%;
-    width:${size}px;height:${size}px;
-    background:rgba(255,${170+Math.floor(Math.random()*60)},0,${0.4+Math.random()*0.4});
-    box-shadow:0 0 ${6+Math.random()*8}px rgba(255,200,0,0.7);
-    animation-duration:${6+Math.random()*10}s;
-    animation-delay:${Math.random()*6}s;
+    width:${s}px;height:${s}px;
+    background:${hue}${0.3+Math.random()*0.4});
+    box-shadow:0 0 ${s*2}px ${hue}0.6);
+    animation-duration:${7+Math.random()*12}s;
+    animation-delay:${Math.random()*8}s;
   `;
-  pc.appendChild(p);
+  pts.appendChild(el);
 }
 
-// ── Login via API ──────────────────────────────────────
-document.getElementById('loginForm').addEventListener('submit', async(e)=>{
+document.getElementById('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   const btn  = document.getElementById('btnLogin');
-  const erro = document.getElementById('msgErro');
-  const usuario = document.getElementById('username').value.trim();
-  const senha   = document.getElementById('password').value;
+  const err  = document.getElementById('errMsg');
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value;
 
   btn.classList.add('loading');
-  btn.textContent = 'Verificando';
-  erro.style.display = 'none';
+  btn.textContent = 'Verificando...';
+  err.style.display = 'none';
 
-  try{
+  try {
     const res  = await fetch('/api/usuarios', {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({
-    acao: 'login',
-    usuario,
-    senha
-  })
-});
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ acao: 'login', usuario: user, senha: pass })
+    });
     const data = await res.json();
-
-    if(res.ok && data.ok){
-      sessionStorage.setItem('isLoggedIn','true');
+    if(res.ok && data.ok) {
+      sessionStorage.setItem('isLoggedIn', 'true');
       sessionStorage.setItem('usuarioLogado', data.usuario);
       sessionStorage.setItem('nivelAcesso', data.nivel || 'vendedor');
       window.location.href = 'painel.html';
     } else {
-      erro.style.display = 'block';
-      erro.style.animation = 'none';
-      setTimeout(()=>erro.style.animation='',10);
+      err.style.display = 'block';
+      err.style.animation = 'none';
+      requestAnimationFrame(() => err.style.animation = '');
     }
-  }catch(err){
-    erro.textContent = '❌ Erro de conexão com o servidor.';
-    erro.style.display = 'block';
+  } catch {
+    err.textContent = '❌ Erro de conexão com o servidor.';
+    err.style.display = 'block';
   } finally {
     btn.classList.remove('loading');
-    btn.textContent = 'Entrar';
+    btn.textContent = 'Entrar no Sistema';
   }
 });
 </script>

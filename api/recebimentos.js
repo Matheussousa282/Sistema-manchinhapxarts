@@ -57,12 +57,43 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'pedido_id, forma e valor são obrigatórios.' });
       }
 
+      // Garante que a tabela caixa existe
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS caixa_lancamentos (
+          id          SERIAL PRIMARY KEY,
+          data        DATE          NOT NULL DEFAULT CURRENT_DATE,
+          tipo        VARCHAR(10)   NOT NULL CHECK (tipo IN ('entrada','saida')),
+          forma       VARCHAR(60)   NOT NULL,
+          valor       NUMERIC(10,2) NOT NULL,
+          descricao   TEXT          DEFAULT '',
+          categoria   VARCHAR(100)  DEFAULT '',
+          usuario     VARCHAR(100)  DEFAULT '',
+          criado_em   TIMESTAMP     DEFAULT NOW()
+        )
+      `);
+      await client.query(`
+        ALTER TABLE caixa_lancamentos ADD COLUMN IF NOT EXISTS categoria VARCHAR(100) DEFAULT ''
+      `).catch(() => {});
+
+      // Busca nome do cliente para a descricao
+      const pedidoInfo = await client.query(
+        `SELECT nome_cliente FROM pedidos WHERE id = $1`, [pedido_id]
+      );
+      const nomeCliente = pedidoInfo.rows[0]?.nome_cliente || '';
+
+      // Data atual no fuso de Fortaleza
+      const dataHoje = new Intl.DateTimeFormat('pt-BR', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        timeZone: 'America/Fortaleza'
+      }).format(new Date()).split('/').reverse().join('-');
+
       // Insere o recebimento
-      await client.query(
+      const recResult = await client.query(
         `INSERT INTO recebimentos (pedido_id, forma, valor, observacao, usuario)
-         VALUES ($1, $2, $3, $4, $5)`,
+         VALUES ($1, $2, $3, $4, $5) RETURNING id`,
         [pedido_id, forma, valor, observacao || '', usuario || '']
       );
+      const recebimentoId = recResult.rows[0].id;
 
       // Atualiza valor_recebido e status no pedido
       await client.query(
@@ -70,7 +101,24 @@ export default async function handler(req, res) {
         [novo_valor_recebido, novo_status, pedido_id]
       );
 
-      return res.status(201).json({ message: 'Recebimento registrado com sucesso!' });
+      // Salva no caixa automaticamente (upsert por recebimento_id para evitar duplicata)
+      await client.query(`
+        INSERT INTO caixa_lancamentos (data, tipo, forma, valor, descricao, categoria, usuario)
+        SELECT $1, 'entrada', $2, $3, $4, 'Recebimento', $5
+        WHERE NOT EXISTS (
+          SELECT 1 FROM caixa_lancamentos
+          WHERE descricao = $4 AND data = $1 AND valor = $3 AND forma = $2
+            AND criado_em > NOW() - INTERVAL '5 seconds'
+        )
+      `, [
+        dataHoje,
+        forma,
+        valor,
+        `Recebimento pedido #${pedido_id} — ${nomeCliente}`,
+        usuario || ''
+      ]);
+
+      return res.status(201).json({ message: 'Recebimento registrado com sucesso!', recebimento_id: recebimentoId });
     }
 
     // ── DELETE /api/recebimentos?id=X — Remover recebimento (estorno)

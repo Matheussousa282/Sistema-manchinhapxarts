@@ -956,6 +956,27 @@ async function confirmarRecebimento(){
       mrPedido.valor_recebido=novoRecebido;mrPedido.status=novoStatus;
       const idx=window.todosPedidos.findIndex(p=>p.id===mrPedido.id);
       if(idx>=0){window.todosPedidos[idx].valor_recebido=novoRecebido;window.todosPedidos[idx].status=novoStatus;}
+      // ── Registrar no caixa ──────────────────────────────
+      try{
+        const hoje=new Date().toISOString().slice(0,10);
+        const cliente=mrPedido.nome_cliente||mrPedido.nomeCliente||'';
+        await fetch('/api/caixa',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            tipo:'entrada',forma:formaFinal,valor,
+            descricao:`Recebimento pedido #${mrPedido.id} — ${cliente}`,
+            categoria:'Recebimento',usuario:usuarioLogado,data:hoje
+          })
+        });
+        const key=`mpx_lancamentos_${hoje}`;
+        const local=JSON.parse(localStorage.getItem(key)||'[]');
+        local.push({id:Date.now()+Math.random(),tipo:'entrada',forma:formaFinal,valor,
+          descricao:`Recebimento pedido #${mrPedido.id} — ${cliente}`,
+          categoria:'Recebimento',usuario:usuarioLogado,
+          data:hoje,criado_em:new Date().toISOString()});
+        localStorage.setItem(key,JSON.stringify(local));
+        carregarCaixa();
+      }catch(_){}
+      // ────────────────────────────────────────────────────
       fecharModalRec();carregarPedidos();
     }else{const err=await res.json();showToast('❌ '+(err.error||'Erro'),'error');}
   }catch(e){showToast('❌ Erro de conexão','error');}

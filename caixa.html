@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏦 Caixa — Mpx Arts</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════ */
+:root {
+  --bg:      #f0f3f8;
+  --surface: #ffffff;
+  --surface2:#f7f9fc;
+  --surface3:#eef2f8;
+  --border:  #e3e8f0;
+  --border2: #d0d8e8;
+
+  --ink:     #111827;
+  --ink2:    #374151;
+  --muted:   #6b7280;
+  --faint:   #9ca3af;
+
+  --blue:    #2563eb;
+  --blue-d:  #1d4ed8;
+  --blue-dim:rgba(37,99,235,0.10);
+  --blue-glow:rgba(37,99,235,0.18);
+
+  --green:   #16a34a;
+  --green-d: #15803d;
+  --green-dim:rgba(22,163,74,0.10);
+  --green-glow:rgba(22,163,74,0.20);
+
+  --red:     #dc2626;
+  --red-dim: rgba(220,38,38,0.10);
+
+  --amber:   #d97706;
+  --amber-dim:rgba(217,119,6,0.10);
+
+  --purple:  #7c3aed;
+  --purple-dim:rgba(124,58,237,0.10);
+
+  --teal:    #0d9488;
+  --teal-dim:rgba(13,148,136,0.10);
+
+  --font:'Outfit',sans-serif;
+  --mono:'DM Mono',monospace;
+  --r:10px;
+  --r2:14px;
+  --r3:20px;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 12px 32px rgba(0,0,0,0.06);
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font); background:var(--bg); min-height:100vh; color:var(--ink); }
+
+/* ── TOPO ── */
+.topbar {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+}
+.topbar-left { display:flex; align-items:center; gap:14px; }
+.tb-icon {
+  width:40px; height:40px; border-radius:10px;
+  background:linear-gradient(135deg,var(--blue),#60a5fa);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; box-shadow:0 2px 8px var(--blue-glow);
+}
+.tb-title { font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-0.3px; }
+.tb-sub   { font-size:11px; color:var(--muted); margin-top:1px; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+
+/* Status do caixa */
+.status-pill {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:6px 14px; border-radius:30px;
+  font-size:12px; font-weight:700; letter-spacing:0.3px;
+  transition:all 0.3s;
+}
+.status-pill .dot { width:7px; height:7px; border-radius:50%; }
+.status-pill.aberto  { background:var(--green-dim); color:var(--green); border:1.5px solid rgba(22,163,74,0.25); }
+.status-pill.aberto .dot { background:var(--green); box-shadow:0 0 0 3px rgba(22,163,74,0.2); animation:pulse 2s infinite; }
+.status-pill.fechado { background:var(--red-dim);   color:var(--red);   border:1.5px solid rgba(220,38,38,0.25); }
+.status-pill.fechado .dot { background:var(--red); }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 3px rgba(22,163,74,0.2);}50%{box-shadow:0 0 0 6px rgba(22,163,74,0.08);} }
+
+.time-chip {
+  font-family:var(--mono); font-size:12px; color:var(--muted);
+  background:var(--surface2); border:1px solid var(--border);
+  padding:5px 11px; border-radius:20px;
+}
+
+/* ── WRAPPER ── */
+.wrap { max-width:1120px; margin:0 auto; padding:24px 24px 60px; }
+
+/* ── ABERTURA / FECHADO SCREEN ── */
+.gate {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; padding:80px 20px; gap:24px; text-align:center;
+}
+.gate-icon { font-size:64px; filter:drop-shadow(0 4px 14px rgba(0,0,0,0.12)); }
+.gate h2 { font-size:26px; font-weight:800; color:var(--ink); letter-spacing:-0.5px; }
+.gate p  { font-size:14px; color:var(--muted); max-width:380px; line-height:1.6; }
+
+/* ── BOTÕES ── */
+.btn {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:11px 22px; border-radius:var(--r); border:none;
+  font-family:var(--font); font-size:14px; font-weight:700;
+  cursor:pointer; transition:all 0.18s;
+}
+.btn-primary { background:var(--blue); color:#fff; box-shadow:0 2px 10px var(--blue-glow); }
+.btn-primary:hover { background:var(--blue-d); transform:translateY(-1px); box-shadow:0 4px 16px var(--blue-glow); }
+.btn-success { background:var(--green); color:#fff; box-shadow:0 2px 10px var(--green-glow); }
+.btn-success:hover { background:var(--green-d); transform:translateY(-1px); }
+.btn-danger  { background:var(--red); color:#fff; }
+.btn-danger:hover { background:#b91c1c; transform:translateY(-1px); }
+.btn-ghost { background:var(--surface2); color:var(--ink2); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--border); }
+.btn-sm { padding:7px 14px; font-size:12px; }
+.btn.loading { opacity:0.65; pointer-events:none; }
+
+/* ── GRID PRINCIPAL ── */
+.main-grid {
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap:18px;
+  align-items:start;
+}
+@media(max-width:860px){ .main-grid{ grid-template-columns:1fr; } }
+
+/* ── CARDS ── */
+.card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+.card + .card { margin-top:14px; }
+.card-title {
+  font-size:11px; font-weight:700; letter-spacing:1.2px;
+  text-transform:uppercase; color:var(--blue);
+  margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.card-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── RESUMO DO DIA ── */
+.summary-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px; margin-bottom:16px;
+}
+.sum-card {
+  border-radius:var(--r); padding:14px 16px;
+  display:flex; flex-direction:column; gap:4px;
+  border:1px solid transparent;
+}
+.sum-card.entrada { background:#f0fdf4; border-color:rgba(22,163,74,0.2); }
+.sum-card.saida   { background:#fef2f2; border-color:rgba(220,38,38,0.2); }
+.sum-card.saldo   { background:linear-gradient(135deg,var(--blue-dim),rgba(37,99,235,0.05)); border-color:rgba(37,99,235,0.2); grid-column:span 2; }
+.sum-card .sc-icon { font-size:18px; margin-bottom:2px; }
+.sum-card .sc-label { font-size:10px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--muted); }
+.sum-card .sc-val  { font-size:22px; font-weight:800; font-family:var(--mono); line-height:1.1; }
+.sum-card.entrada .sc-val { color:var(--green); }
+.sum-card.saida   .sc-val { color:var(--red); }
+.sum-card.saldo   .sc-val { color:var(--blue); font-size:26px; }
+.sum-card .sc-count { font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* Formas breakdown */
+.forma-breakdown { display:flex; flex-direction:column; gap:7px; margin-bottom:16px; }
+.fb-row {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px;
+  background:var(--surface2); border-radius:var(--r);
+  border:1px solid var(--border);
+}
+.fb-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.fb-label { flex:1; font-size:13px; font-weight:600; color:var(--ink2); }
+.fb-bar-wrap { width:80px; height:5px; background:var(--border2); border-radius:4px; overflow:hidden; }
+.fb-bar { height:100%; border-radius:4px; transition:width 0.6s ease; }
+.fb-val { font-family:var(--mono); font-size:12px; font-weight:600; color:var(--ink); min-width:75px; text-align:right; }
+
+/* Botão fechar caixa */
+.fechar-btn {
+  width:100%; padding:13px;
+  background:linear-gradient(135deg,#dc2626,#b91c1c);
+  color:#fff; border:none; border-radius:var(--r);
+  font-family:var(--font); font-size:14px; font-weight:800;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  box-shadow:0 3px 12px rgba(220,38,38,0.30);
+  letter-spacing:0.2px;
+}
+.fechar-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(220,38,38,0.40); }
+
+/* ── FORMULÁRIO LANÇAMENTO ── */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.fg { display:flex; flex-direction:column; gap:5px; }
+.fg.full { grid-column:span 2; }
+.fg label {
+  font-size:10.5px; font-weight:700; letter-spacing:0.9px;
+  text-transform:uppercase; color:var(--muted);
+}
+.fg input, .fg select, .fg textarea {
+  padding:10px 13px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r); background:var(--surface2);
+  font-family:var(--font); font-size:14px; color:var(--ink);
+  outline:none; transition:border-color 0.18s, box-shadow 0.18s;
+  appearance:none;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-dim);
+  background:#fff;
+}
+
+/* Tipo toggle */
+.tipo-toggle { display:flex; gap:6px; }
+.tipo-btn {
+  flex:1; padding:10px 6px; border-radius:var(--r);
+  border:2px solid var(--border); background:var(--surface2);
+  font-family:var(--font); font-size:12px; font-weight:700;
+  cursor:pointer; transition:all 0.18s; display:flex;
+  flex-direction:column; align-items:center; gap:4px;
+  color:var(--muted);
+}
+.tipo-btn .ti { font-size:20px; }
+.tipo-btn.ativo.entrada { border-color:var(--green); background:var(--green-dim); color:var(--green); }
+.tipo-btn.ativo.saida   { border-color:var(--red);   background:var(--red-dim);   color:var(--red); }
+.tipo-btn:hover { border-color:var(--border2); background:var(--surface3); }
+
+/* ── LISTA DE LANÇAMENTOS ── */
+.lancamentos-list { display:flex; flex-direction:column; gap:7px; max-height:420px; overflow-y:auto; }
+.lancamentos-list::-webkit-scrollbar { width:4px; }
+.lancamentos-list::-webkit-scrollbar-thumb { background:var(--border2); border-radius:4px; }
+
+.lanc-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 14px;
+  background:var(--surface2); border-radius:var(--r);
+  border:1px solid var(--border);
+  transition:border-color 0.15s;
+  animation:fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);} }
+.lanc-item:hover { border-color:var(--border2); }
+
+.lanc-dot { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+.lanc-dot.entrada { background:var(--green-dim); }
+.lanc-dot.saida   { background:var(--red-dim); }
+.lanc-info { flex:1; min-width:0; }
+.lanc-forma { font-size:13px; font-weight:700; color:var(--ink); }
+.lanc-desc  { font-size:11px; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lanc-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.lanc-val   { font-family:var(--mono); font-size:14px; font-weight:700; }
+.lanc-val.entrada { color:var(--green); }
+.lanc-val.saida   { color:var(--red); }
+.lanc-hora  { font-size:10px; color:var(--faint); }
+.btn-del-lanc {
+  background:none; border:none; color:var(--faint); font-size:15px;
+  cursor:pointer; padding:3px 5px; border-radius:5px;
+  transition:color 0.15s;
+  line-height:1;
+}
+.btn-del-lanc:hover { color:var(--red); }
+
+.lanc-vazio { text-align:center; padding:32px; color:var(--faint); font-size:14px; }
+
+/* Filtro lançamentos */
+.lanc-filter {
+  display:flex; gap:6px; flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.lf-btn {
+  padding:4px 12px; border-radius:20px;
+  border:1.5px solid var(--border);
+  background:var(--surface2); color:var(--muted);
+  font-family:var(--font); font-size:11.5px; font-weight:700;
+  cursor:pointer; transition:all 0.15s;
+}
+.lf-btn:hover { border-color:var(--border2); color:var(--ink2); }
+.lf-btn.ativo { background:var(--blue); color:#fff; border-color:var(--blue); }
+
+/* Busca */
+.search-box {
+  display:flex; align-items:center; gap:8px;
+  border:1.5px solid var(--border); border-radius:var(--r);
+  background:var(--surface2); padding:8px 12px;
+  margin-bottom:12px;
+  transition:border-color 0.18s;
+}
+.search-box:focus-within { border-color:var(--blue); background:#fff; }
+.search-box input {
+  border:none; background:transparent; outline:none;
+  font-family:var(--font); font-size:13px; color:var(--ink); flex:1;
+}
+.search-box input::placeholder { color:var(--faint); }
+
+/* ── RELATÓRIO MODAL ── */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.55); z-index:200;
+  justify-content:center; align-items:center;
+  backdrop-filter:blur(4px);
+}
+.overlay.open { display:flex; }
+.modal {
+  background:var(--surface); border-radius:var(--r3);
+  width:90%; max-width:660px; max-height:88vh;
+  overflow-y:auto; box-shadow:var(--shadow-md);
+  border:1px solid var(--border);
+  animation:modalIn 0.25s cubic-bezier(.23,1,.32,1);
+}
+@keyframes modalIn { from{opacity:0;transform:scale(0.96) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);} }
+.modal-head {
+  padding:24px 26px 0;
+  display:flex; align-items:flex-start; justify-content:space-between;
+}
+.modal-head h2 { font-size:19px; font-weight:800; color:var(--ink); }
+.modal-head p  { font-size:12px; color:var(--muted); margin-top:3px; }
+.modal-close {
+  background:none; border:none; font-size:20px; color:var(--faint);
+  cursor:pointer; padding:3px; border-radius:6px; transition:color 0.15s;
+}
+.modal-close:hover { color:var(--red); }
+.modal-body { padding:20px 26px 26px; }
+
+/* Relatório print-ready */
+.rel-header {
+  background:linear-gradient(135deg,var(--blue),#3b82f6);
+  border-radius:var(--r); padding:20px 22px; margin-bottom:18px;
+  color:#fff;
+}
+.rel-header .rh-title { font-size:20px; font-weight:800; }
+.rel-header .rh-sub   { font-size:12px; opacity:0.8; margin-top:3px; }
+.rel-header .rh-badges { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+.rel-badge {
+  padding:5px 12px; border-radius:20px;
+  background:rgba(255,255,255,0.18);
+  font-size:11px; font-weight:700;
+  display:flex; align-items:center; gap:5px;
+}
+
+.rel-metrics {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:10px; margin-bottom:18px;
+}
+.rel-metric {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:var(--r); padding:14px;
+  text-align:center;
+}
+.rel-metric .rm-label { font-size:10px; font-weight:700; text-transform:uppercase; color:var(--muted); letter-spacing:0.8px; }
+.rel-metric .rm-val { font-size:20px; font-weight:800; font-family:var(--mono); margin-top:4px; }
+.rel-metric.g .rm-val { color:var(--green); }
+.rel-metric.r .rm-val { color:var(--red); }
+.rel-metric.b .rm-val { color:var(--blue); }
+
+.rel-section-title { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); letter-spacing:1px; margin:16px 0 8px; }
+
+.rel-table { width:100%; border-collapse:collapse; font-size:13px; }
+.rel-table th { background:var(--surface3); color:var(--muted); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; padding:8px 10px; text-align:left; }
+.rel-table td { padding:9px 10px; border-bottom:1px solid var(--border); color:var(--ink2); }
+.rel-table tr:last-child td { border:none; }
+.rel-table .val-pos { color:var(--green); font-weight:700; font-family:var(--mono); }
+.rel-table .val-neg { color:var(--red);   font-weight:700; font-family:var(--mono); }
+
+.rel-forma-row {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; background:var(--surface2);
+  border-radius:var(--r); margin-bottom:6px;
+  border:1px solid var(--border);
+}
+.rel-forma-dot { width:12px; height:12px; border-radius:50%; }
+.rel-forma-name { flex:1; font-size:13px; font-weight:600; }
+.rel-forma-val { font-family:var(--mono); font-size:13px; font-weight:700; color:var(--green); }
+.rel-forma-pct { font-size:11px; color:var(--muted); min-width:36px; text-align:right; }
+
+.print-btn { float:right; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:24px; right:24px;
+  background:var(--surface); border-left:4px solid var(--green);
+  border-radius:var(--r); padding:13px 18px;
+  font-size:14px; font-weight:600; color:var(--ink);
+  box-shadow:var(--shadow-md); z-index:9999; max-width:300px;
+  animation:toastIn 0.25s ease;
+}
+.toast.err { border-color:var(--red); }
+.toast.warn { border-color:var(--amber); }
+@keyframes toastIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
+
+/* ── DATA PICKER ── */
+.date-nav {
+  display:flex; align-items:center; gap:8px; margin-bottom:16px;
+}
+.date-nav input[type=date] {
+  padding:7px 12px; border:1.5px solid var(--border);
+  border-radius:var(--r); font-family:var(--font);
+  font-size:13px; color:var(--ink); background:var(--surface2);
+  outline:none; cursor:pointer;
+}
+.date-nav input:focus { border-color:var(--blue); }
+.date-nav .dn-arrow {
+  padding:7px 10px; border:1.5px solid var(--border);
+  border-radius:var(--r); background:var(--surface2);
+  cursor:pointer; font-size:14px; color:var(--ink2);
+  transition:all 0.15s;
+}
+.date-nav .dn-arrow:hover { background:var(--border); }
+.date-nav .dn-today {
+  padding:7px 12px; border:1.5px solid var(--blue);
+  border-radius:var(--r); background:var(--blue-dim);
+  color:var(--blue); font-family:var(--font); font-size:12px;
+  font-weight:700; cursor:pointer; transition:all 0.15s;
+}
+.date-nav .dn-today:hover { background:var(--blue); color:#fff; }
+
+/* Esconder quando caixa fechado */
+.hidden { display:none !important; }
+
+/* ── ABERTURA DE CAIXA ── */
+.abertura-form {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r3); padding:36px; max-width:440px;
+  box-shadow:var(--shadow-md);
+}
+.abertura-form h3 { font-size:18px; font-weight:800; margin-bottom:6px; }
+.abertura-form p  { font-size:13px; color:var(--muted); margin-bottom:24px; }
+
+@media print {
+  .topbar, .main-grid .card:first-child, .date-nav, .lanc-filter, .search-box, .fechar-btn, .btn-del-lanc, .print-btn { display:none !important; }
+  .modal { position:static; max-height:none; box-shadow:none; border:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="tb-icon">🏦</div>
+    <div>
+      <div class="tb-title">Fluxo de Caixa</div>
+      <div class="tb-sub">Mpx Arts — Sistema de Vendas</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="status-pill fechado" id="statusPill">
+      <div class="dot"></div>
+      <span id="statusLabel">Caixa Fechado</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="abrirRelatorio()" id="btnRelatorio" style="display:none">📊 Relatório</button>
+    <div class="time-chip" id="timeClock">--:--</div>
+  </div>
+</div>
+
+<!-- TELA PRINCIPAL -->
+<div class="wrap" id="wrapContent">
+
+  <!-- CAIXA FECHADO: tela de abertura -->
+  <div id="telaFechado">
+    <div class="gate">
+      <div class="gate-icon">🔐</div>
+      <h2>Caixa Fechado</h2>
+      <p>Abra o caixa para começar a registrar entradas e saídas do dia. Informe o saldo inicial (fundo de caixa).</p>
+      <div class="abertura-form">
+        <h3>Abrir Caixa</h3>
+        <p>Defina o fundo inicial e confirme para liberar os lançamentos.</p>
+        <div class="fg" style="margin-bottom:14px;">
+          <label>Data do Caixa</label>
+          <input type="date" id="dataAbertura">
+        </div>
+        <div class="fg" style="margin-bottom:14px;">
+          <label>Saldo Inicial (Fundo de Caixa)</label>
+          <input type="number" id="fundoInicial" placeholder="0,00" step="0.01" min="0">
+        </div>
+        <div class="fg" style="margin-bottom:20px;">
+          <label>Operador Responsável</label>
+          <input type="text" id="operadorAbertura" placeholder="Seu nome">
+        </div>
+        <button class="btn btn-success" style="width:100%;justify-content:center;font-size:15px;" onclick="abrirCaixa()">
+          🔓 Abrir Caixa
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAIXA ABERTO: interface principal -->
+  <div id="telaAberto" class="hidden">
+
+    <!-- Navegação de data -->
+    <div class="date-nav">
+      <button class="dn-arrow" onclick="mudarDia(-1)">◀</button>
+      <input type="date" id="dataPicker" onchange="carregarDia()">
+      <button class="dn-arrow" onclick="mudarDia(+1)">▶</button>
+      <button class="dn-today" onclick="irHoje()">Hoje</button>
+      <span style="font-size:12px;color:var(--muted);margin-left:4px;" id="labelDia"></span>
+    </div>
+
+    <div class="main-grid">
+
+      <!-- COLUNA ESQUERDA: resumo + form -->
+      <div>
+        <!-- Resumo do dia -->
+        <div class="card">
+          <div class="card-title">📈 Resumo do Dia</div>
+          <div class="summary-grid" id="summaryGrid">
+            <div class="sum-card entrada">
+              <span class="sc-icon">💚</span>
+              <span class="sc-label">Entradas</span>
+              <span class="sc-val" id="valEntradas">R$ 0,00</span>
+              <span class="sc-count" id="cntEntradas">0 lançamentos</span>
+            </div>
+            <div class="sum-card saida">
+              <span class="sc-icon">🔴</span>
+              <span class="sc-label">Saídas</span>
+              <span class="sc-val" id="valSaidas">R$ 0,00</span>
+              <span class="sc-count" id="cntSaidas">0 lançamentos</span>
+            </div>
+            <div class="sum-card saldo">
+              <span class="sc-label">💰 Saldo do Dia</span>
+              <span class="sc-val" id="valSaldo">R$ 0,00</span>
+            </div>
+          </div>
+
+          <!-- Breakdown por forma -->
+          <div class="card-title" style="margin-top:4px;">💳 Por Forma de Pagamento</div>
+          <div class="forma-breakdown" id="formaBreakdown">
+            <div style="text-align:center;color:var(--faint);font-size:13px;padding:12px 0;">Sem entradas ainda</div>
+          </div>
+        </div>
+
+        <!-- Fechar caixa (apenas dia de hoje) -->
+        <div class="card" id="cardFechar">
+          <div class="card-title" style="color:var(--red)">⚠️ Fechamento</div>
+          <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;line-height:1.6;">
+            Ao fechar o caixa, um relatório completo do dia será gerado. Você ainda poderá consultar dias anteriores.
+          </p>
+          <button class="fechar-btn" onclick="confirmarFechar()">
+            🔒 Fechar o Caixa
+          </button>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA: lançamentos -->
+      <div>
+        <!-- Formulário de lançamento -->
+        <div class="card" id="cardLancamento">
+          <div class="card-title">➕ Novo Lançamento</div>
+
+          <div class="fg" style="margin-bottom:12px;">
+            <label>Tipo</label>
+            <div class="tipo-toggle">
+              <button class="tipo-btn ativo entrada" id="tipoEntrada" onclick="setTipo('entrada')">
+                <span class="ti">⬆️</span> Entrada
+              </button>
+              <button class="tipo-btn saida" id="tipoSaida" onclick="setTipo('saida')">
+                <span class="ti">⬇️</span> Saída
+              </button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="fg">
+              <label>Forma</label>
+              <select id="inpForma">
+                <option value="Dinheiro">💵 Dinheiro</option>
+                <option value="Pix">⚡ Pix</option>
+                <option value="Cartão Débito">💳 Cartão Débito</option>
+                <option value="Cartão Crédito">💳 Cartão Crédito</option>
+                <option value="Transferência">🏦 Transferência</option>
+                <option value="Cheque">📄 Cheque</option>
+                <option value="Outro">📌 Outro</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Valor (R$)</label>
+              <input type="number" id="inpValor" placeholder="0,00" step="0.01" min="0.01">
+            </div>
+            <div class="fg full">
+              <label>Descrição</label>
+              <input type="text" id="inpDesc" placeholder="Ex: Venda para João Silva, Aluguel, Material...">
+            </div>
+            <div class="fg">
+              <label>Categoria</label>
+              <select id="inpCategoria">
+                <option value="">— Selecione —</option>
+                <optgroup label="Entradas">
+                  <option value="Venda">Venda</option>
+                  <option value="Serviço">Serviço</option>
+                  <option value="Recebimento">Recebimento de pedido</option>
+                  <option value="Outros Recebimentos">Outros recebimentos</option>
+                </optgroup>
+                <optgroup label="Saídas">
+                  <option value="Fornecedor">Fornecedor</option>
+                  <option value="Funcionário">Funcionário / Pró-labore</option>
+                  <option value="Aluguel">Aluguel</option>
+                  <option value="Despesa Fixa">Despesa Fixa</option>
+                  <option value="Despesa Variável">Despesa Variável</option>
+                  <option value="Outros Gastos">Outros gastos</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Operador</label>
+              <input type="text" id="inpOperador" placeholder="Quem está registrando">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px;font-size:14px;" onclick="addLancamento()" id="btnAdd">
+            + Registrar Lançamento
+          </button>
+        </div>
+
+        <!-- Lista de lançamentos -->
+        <div class="card">
+          <div class="card-title">📋 Lançamentos do Dia</div>
+
+          <div class="search-box">
+            <span style="color:var(--faint)">🔍</span>
+            <input type="text" id="searchLanc" placeholder="Buscar por descrição ou forma..." oninput="renderLancamentos()">
+          </div>
+
+          <div class="lanc-filter">
+            <button class="lf-btn ativo" onclick="setFiltro('todos',this)">Todos</button>
+            <button class="lf-btn" onclick="setFiltro('entrada',this)">⬆ Entradas</button>
+            <button class="lf-btn" onclick="setFiltro('saida',this)">⬇ Saídas</button>
+          </div>
+
+          <div class="lancamentos-list" id="lancList">
+            <div class="lanc-vazio">Nenhum lançamento ainda.<br><small>Use o formulário acima para registrar.</small></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RELATÓRIO -->
+<div class="overlay" id="modalRelatorio">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>📊 Relatório de Caixa</h2>
+        <p id="relSubTitle">—</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-ghost btn-sm print-btn" onclick="window.print()">🖨️ Imprimir</button>
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="relatorioBody">
+      <div style="text-align:center;padding:32px;color:var(--faint);">Gerando relatório...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//  ESTADO
+// ════════════════════════════════════════════
+let caixaAberto = false;
+let dataAtual   = hojeStr();
+let lancamentos = [];
+let filtroAtivo = 'todos';
+let tipoAtivo   = 'entrada';
+let fundoCaixa  = 0;
+
+// ── Helpers ──
+function hojeStr() {
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function fmt(v) {
+  return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+}
+function fmtHora(ts) {
+  if(!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function fmtData(str) {
+  if(!str) return '';
+  const [y,m,d] = str.split('-');
+  return `${d}/${m}/${y}`;
+}
+function toast(msg, tipo='') {
+  const t = document.createElement('div');
+  t.className = `toast${tipo?' '+tipo:''}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+// ── Relógio ──
+setInterval(() => {
+  document.getElementById('timeClock').textContent =
+    new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}, 1000);
+
+// ── Operador salvo ──
+function getOperador() {
+  return sessionStorage.getItem('usuarioLogado') || localStorage.getItem('mpx_operador') || '';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const op = getOperador();
+  if(op) { 
+    document.getElementById('operadorAbertura').value = op;
+    document.getElementById('inpOperador').value = op;
+  }
+  // Data abertura = hoje
+  document.getElementById('dataAbertura').value = hojeStr();
+  // Verificar se caixa já está aberto (via localStorage)
+  verificarEstadoCaixa();
+});
+
+// ════════════════════════════════════════════
+//  ESTADO DO CAIXA (localStorage + server)
+// ════════════════════════════════════════════
+function verificarEstadoCaixa() {
+  const estado = localStorage.getItem('mpx_caixa_estado');
+  if(estado) {
+    try {
+      const e = JSON.parse(estado);
+      // Se aberto no mesmo dia, continua
+      if(e.aberto && e.data === hojeStr()) {
+        caixaAberto = true;
+        dataAtual   = e.data;
+        fundoCaixa  = e.fundo || 0;
+        ativarCaixa();
+        return;
+      } else if(e.aberto && e.data !== hojeStr()) {
+        // Caixa foi deixado aberto de dia anterior — avisar
+        const fechar = confirm(`⚠️ O caixa do dia ${fmtData(e.data)} ficou aberto.\nDeseja fechar agora e abrir um novo?`);
+        if(fechar) {
+          fecharCaixaDia(e.data, false);
+          localStorage.removeItem('mpx_caixa_estado');
+        }
+      }
+    } catch{}
+  }
+  // Mostrar tela de fechado
+  document.getElementById('telaFechado').classList.remove('hidden');
+  document.getElementById('telaAberto').classList.add('hidden');
+  atualizarStatusPill(false);
+}
+
+function abrirCaixa() {
+  const data = document.getElementById('dataAbertura').value;
+  const fundo = parseFloat(document.getElementById('fundoInicial').value) || 0;
+  const op    = document.getElementById('operadorAbertura').value.trim();
+
+  if(!data) { toast('Informe a data do caixa!','err'); return; }
+
+  // Salvar estado
+  localStorage.setItem('mpx_caixa_estado', JSON.stringify({
+    aberto: true, data, fundo, operador: op
+  }));
+  if(op) localStorage.setItem('mpx_operador', op);
+
+  caixaAberto = true;
+  dataAtual   = data;
+  fundoCaixa  = fundo;
+
+  // Se houver fundo, registrar como entrada
+  if(fundo > 0) {
+    adicionarLancamentoLocal({
+      tipo:'entrada', forma:'Dinheiro', valor:fundo,
+      descricao:'Fundo de Caixa (Abertura)', categoria:'Abertura',
+      usuario: op, data, criado_em: new Date().toISOString()
+    });
+  }
+
+  ativarCaixa();
+  toast('✅ Caixa aberto com sucesso!');
+}
+
+function ativarCaixa() {
+  document.getElementById('dataPicker').value = dataAtual;
+  document.getElementById('labelDia').textContent = `(${fmtData(dataAtual)})`;
+  document.getElementById('telaFechado').classList.add('hidden');
+  document.getElementById('telaAberto').classList.remove('hidden');
+  document.getElementById('btnRelatorio').style.display = '';
+  atualizarStatusPill(true);
+  // Mostrar/esconder botão fechar conforme data
+  document.getElementById('cardFechar').style.display = (dataAtual === hojeStr()) ? '' : 'none';
+  document.getElementById('cardLancamento').style.display = (dataAtual === hojeStr()) ? '' : 'none';
+  carregarDia();
+}
+
+function atualizarStatusPill(aberto) {
+  const pill = document.getElementById('statusPill');
+  const lbl  = document.getElementById('statusLabel');
+  pill.className = `status-pill ${aberto?'aberto':'fechado'}`;
+  lbl.textContent = aberto ? 'Caixa Aberto' : 'Caixa Fechado';
+}
+
+// ── Confirmar fechar ──
+function confirmarFechar() {
+  if(!confirm('Tem certeza que deseja FECHAR o caixa de hoje?\nUm relatório será gerado.')) return;
+  fecharCaixaDia(dataAtual, true);
+}
+
+async function fecharCaixaDia(data, mostrarRelatorio) {
+  try {
+    // Tentar enviar fechamento ao servidor
+    await fetch('/api/caixa/fechar', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ data, saldo: calcSaldo() })
+    }).catch(()=>{});
+  } catch{}
+
+  localStorage.removeItem('mpx_caixa_estado');
+  caixaAberto = false;
+
+  if(mostrarRelatorio) {
+    abrirRelatorio();
+    setTimeout(() => {
+      document.getElementById('telaAberto').classList.add('hidden');
+      document.getElementById('telaFechado').classList.remove('hidden');
+      document.getElementById('btnRelatorio').style.display = 'none';
+      atualizarStatusPill(false);
+    }, 400);
+  }
+
+  toast('🔒 Caixa fechado com sucesso!');
+}
+
+// ════════════════════════════════════════════
+//  LANÇAMENTOS
+// ════════════════════════════════════════════
+function getStorageKey(data) { return `mpx_lancamentos_${data}`; }
+
+function carregarLancamentos(data) {
+  try {
+    const raw = localStorage.getItem(getStorageKey(data));
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function salvarLancamentos(data, lista) {
+  localStorage.setItem(getStorageKey(data), JSON.stringify(lista));
+}
+
+function adicionarLancamentoLocal(lanc) {
+  const lista = carregarLancamentos(lanc.data || dataAtual);
+  lanc.id = Date.now() + Math.random();
+  lista.push(lanc);
+  salvarLancamentos(lanc.data || dataAtual, lista);
+  return lista;
+}
+
+async function addLancamento() {
+  const forma  = document.getElementById('inpForma').value;
+  const valor  = parseFloat(document.getElementById('inpValor').value);
+  const desc   = document.getElementById('inpDesc').value.trim();
+  const cat    = document.getElementById('inpCategoria').value;
+  const op     = document.getElementById('inpOperador').value.trim();
+
+  if(!valor || valor <= 0) { toast('Informe um valor válido!','err'); return; }
+
+  const btn = document.getElementById('btnAdd');
+  btn.classList.add('loading'); btn.textContent = 'Registrando...';
+
+  const lanc = {
+    tipo: tipoAtivo, forma, valor, descricao: desc,
+    categoria: cat, usuario: op,
+    data: dataAtual, criado_em: new Date().toISOString()
+  };
+
+  // Enviar ao servidor
+  try {
+    const res = await fetch('/api/caixa', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(lanc)
+    });
+    if(res.ok) {
+      const d = await res.json();
+      if(d.lancamento) { lanc.id = d.lancamento.id; lanc.server = true; }
+    }
+  } catch{}
+
+  // Salvar localmente também (redundância)
+  adicionarLancamentoLocal(lanc);
+
+  // Limpar form
+  document.getElementById('inpValor').value = '';
+  document.getElementById('inpDesc').value  = '';
+
+  btn.classList.remove('loading'); btn.textContent = '+ Registrar Lançamento';
+  toast(`✅ ${tipoAtivo === 'entrada' ? 'Entrada' : 'Saída'} de ${fmt(valor)} registrada!`);
+  carregarDia();
+}
+
+async function removerLancamento(id) {
+  if(!confirm('Remover este lançamento?')) return;
+
+  // Remover localmente
+  const lista = carregarLancamentos(dataAtual).filter(l => String(l.id) !== String(id));
+  salvarLancamentos(dataAtual, lista);
+
+  // Tentar remover no servidor
+  try { await fetch(`/api/caixa?id=${id}`, {method:'DELETE'}).catch(()=>{}); } catch{}
+
+  carregarDia();
+  toast('Lançamento removido.','warn');
+}
+
+// ════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════
+function carregarDia() {
+  // Primeiro tenta carregar do server, fallback no localStorage
+  carregarDoServidor().catch(() => {
+    lancamentos = carregarLancamentos(dataAtual);
+    render();
+  });
+}
+
+async function carregarDoServidor() {
+  const res = await fetch(`/api/caixa?data=${dataAtual}`);
+  if(!res.ok) throw new Error();
+  const d = await res.json();
+  // Mescla server + local (evita duplicatas por id)
+  const local = carregarLancamentos(dataAtual);
+  const serverIds = new Set((d.lancamentos||[]).map(l=>String(l.id)));
+  const soLocal = local.filter(l => !serverIds.has(String(l.id)));
+  lancamentos = [...(d.lancamentos||[]), ...soLocal];
+  // Sincronizar local
+  salvarLancamentos(dataAtual, lancamentos);
+  render();
+}
+
+function calcSaldo() {
+  let ent=0, sai=0;
+  lancamentos.forEach(l => {
+    if(l.tipo==='entrada') ent += Number(l.valor);
+    else sai += Number(l.valor);
+  });
+  return ent - sai;
+}
+
+function render() {
+  renderResumo();
+  renderFormas();
+  renderLancamentos();
+}
+
+function renderResumo() {
+  let ent=0, sai=0, cntE=0, cntS=0;
+  lancamentos.forEach(l => {
+    if(l.tipo==='entrada'){ ent+=Number(l.valor); cntE++; }
+    else                  { sai+=Number(l.valor); cntS++; }
+  });
+  const saldo = ent - sai;
+  document.getElementById('valEntradas').textContent = fmt(ent);
+  document.getElementById('valSaidas').textContent   = fmt(sai);
+  document.getElementById('valSaldo').textContent    = fmt(saldo);
+  document.getElementById('cntEntradas').textContent = `${cntE} lançamento${cntE!==1?'s':''}`;
+  document.getElementById('cntSaidas').textContent   = `${cntS} lançamento${cntS!==1?'s':''}`;
+  document.getElementById('valSaldo').style.color    = saldo < 0 ? 'var(--red)' : 'var(--blue)';
+}
+
+const CORES_FORMA = {
+  'Dinheiro': '#16a34a', 'Pix':'#2563eb', 'Cartão Débito':'#7c3aed',
+  'Cartão Crédito':'#9333ea', 'Transferência':'#0d9488',
+  'Cheque':'#d97706', 'Outro':'#6b7280'
+};
+
+function renderFormas() {
+  const entradas = lancamentos.filter(l => l.tipo==='entrada');
+  const totalGeral = entradas.reduce((a,l)=>a+Number(l.valor),0);
+  const por = {};
+  entradas.forEach(l => { por[l.forma] = (por[l.forma]||0)+Number(l.valor); });
+  const sorted = Object.entries(por).sort((a,b)=>b[1]-a[1]);
+
+  const el = document.getElementById('formaBreakdown');
+  if(!sorted.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--faint);font-size:13px;padding:12px 0;">Sem entradas ainda</div>';
+    return;
+  }
+  el.innerHTML = sorted.map(([forma,val])=>{
+    const pct = totalGeral>0 ? (val/totalGeral*100).toFixed(1) : 0;
+    const cor = CORES_FORMA[forma]||'#6b7280';
+    return `<div class="fb-row">
+      <div class="fb-dot" style="background:${cor}"></div>
+      <div class="fb-label">${forma}</div>
+      <div class="fb-bar-wrap"><div class="fb-bar" style="width:${pct}%;background:${cor}"></div></div>
+      <div class="fb-val">${fmt(val)}</div>
+      <div style="font-size:11px;color:var(--muted);min-width:36px;text-align:right;">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLancamentos() {
+  const busca = document.getElementById('searchLanc').value.toLowerCase();
+  let lista = [...lancamentos].reverse();
+
+  if(filtroAtivo !== 'todos') lista = lista.filter(l=>l.tipo===filtroAtivo);
+  if(busca) lista = lista.filter(l =>
+    (l.forma||'').toLowerCase().includes(busca) ||
+    (l.descricao||'').toLowerCase().includes(busca) ||
+    (l.categoria||'').toLowerCase().includes(busca)
+  );
+
+  const el = document.getElementById('lancList');
+  if(!lista.length) {
+    el.innerHTML = '<div class="lanc-vazio">Nenhum lançamento encontrado.<br><small>Tente outro filtro ou busca.</small></div>';
+    return;
+  }
+
+  el.innerHTML = lista.map(l => {
+    const isEntrada = l.tipo==='entrada';
+    const sinal = isEntrada ? '+' : '-';
+    const isHoje = dataAtual === hojeStr();
+    return `<div class="lanc-item">
+      <div class="lanc-dot ${l.tipo}">${isEntrada?'⬆️':'⬇️'}</div>
+      <div class="lanc-info">
+        <div class="lanc-forma">${l.forma}${l.categoria?' · <span style="font-weight:500;color:var(--muted)">${l.categoria}</span>':''}</div>
+        <div class="lanc-desc">${l.descricao||'Sem descrição'}${l.usuario?' — '+l.usuario:''}</div>
+      </div>
+      <div class="lanc-right">
+        <span class="lanc-val ${l.tipo}">${sinal} ${fmt(l.valor)}</span>
+        <span class="lanc-hora">${fmtHora(l.criado_em)}</span>
+      </div>
+      ${isHoje ? `<button class="btn-del-lanc" onclick="removerLancamento('${l.id}')" title="Remover">✕</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+//  CONTROLES UI
+// ════════════════════════════════════════════
+function setTipo(t) {
+  tipoAtivo = t;
+  document.getElementById('tipoEntrada').className = `tipo-btn ${t==='entrada'?'ativo entrada':''}`;
+  document.getElementById('tipoSaida').className   = `tipo-btn ${t==='saida'  ?'ativo saida':''}`;
+}
+
+function setFiltro(f, btn) {
+  filtroAtivo = f;
+  document.querySelectorAll('.lf-btn').forEach(b=>b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  renderLancamentos();
+}
+
+function mudarDia(delta) {
+  const d = new Date(dataAtual+'T12:00:00');
+  d.setDate(d.getDate() + delta);
+  dataAtual = d.toISOString().slice(0,10);
+  document.getElementById('dataPicker').value = dataAtual;
+  document.getElementById('labelDia').textContent = `(${fmtData(dataAtual)})`;
+  document.getElementById('cardFechar').style.display   = (dataAtual === hojeStr()) ? '' : 'none';
+  document.getElementById('cardLancamento').style.display = (dataAtual === hojeStr()) ? '' : 'none';
+  carregarDia();
+}
+
+function irHoje() {
+  dataAtual = hojeStr();
+  document.getElementById('dataPicker').value = dataAtual;
+  document.getElementById('labelDia').textContent = `(${fmtData(dataAtual)})`;
+  document.getElementById('cardFechar').style.display    = '';
+  document.getElementById('cardLancamento').style.display = '';
+  carregarDia();
+}
+
+function carregarDia() {
+  dataAtual = document.getElementById('dataPicker').value || hojeStr();
+  document.getElementById('labelDia').textContent = `(${fmtData(dataAtual)})`;
+  carregarDoServidor().catch(() => {
+    lancamentos = carregarLancamentos(dataAtual);
+    render();
+  });
+}
+
+// ════════════════════════════════════════════
+//  RELATÓRIO
+// ════════════════════════════════════════════
+function abrirRelatorio() {
+  document.getElementById('modalRelatorio').classList.add('open');
+  gerarRelatorio();
+}
+function fecharModal() {
+  document.getElementById('modalRelatorio').classList.remove('open');
+}
+
+function gerarRelatorio() {
+  const lista = lancamentos.length ? lancamentos : carregarLancamentos(dataAtual);
+  const entradas = lista.filter(l=>l.tipo==='entrada');
+  const saidas   = lista.filter(l=>l.tipo==='saida');
+  const totalEnt = entradas.reduce((a,l)=>a+Number(l.valor),0);
+  const totalSai = saidas.reduce((a,l)=>a+Number(l.valor),0);
+  const saldo    = totalEnt - totalSai;
+
+  // Por forma
+  const porForma = {};
+  entradas.forEach(l=>{ porForma[l.forma]=(porForma[l.forma]||0)+Number(l.valor); });
+
+  // Por categoria
+  const porCat = {};
+  lista.forEach(l=>{
+    const k = (l.categoria||'Sem categoria') + '|' + l.tipo;
+    porCat[k] = (porCat[k]||0)+Number(l.valor);
+  });
+
+  document.getElementById('relSubTitle').textContent = `Dia ${fmtData(dataAtual)} · Gerado em ${new Date().toLocaleString('pt-BR')}`;
+
+  const formaCores = Object.entries(porForma).sort((a,b)=>b[1]-a[1]);
+
+  document.getElementById('relatorioBody').innerHTML = `
+    <div class="rel-header">
+      <div class="rh-title">📊 Relatório de Caixa — Mpx Arts</div>
+      <div class="rh-sub">Data: ${fmtData(dataAtual)} · Gerado em ${new Date().toLocaleString('pt-BR')}</div>
+      <div class="rh-badges">
+        <div class="rel-badge">📦 ${lista.length} lançamentos</div>
+        <div class="rel-badge">⬆️ ${entradas.length} entradas</div>
+        <div class="rel-badge">⬇️ ${saidas.length} saídas</div>
+        ${fundoCaixa>0 ? `<div class="rel-badge">💵 Fundo: ${fmt(fundoCaixa)}</div>` : ''}
+      </div>
+    </div>
+
+    <div class="rel-metrics">
+      <div class="rel-metric g">
+        <div class="rm-label">Total Entradas</div>
+        <div class="rm-val">${fmt(totalEnt)}</div>
+      </div>
+      <div class="rel-metric r">
+        <div class="rm-label">Total Saídas</div>
+        <div class="rm-val">${fmt(totalSai)}</div>
+      </div>
+      <div class="rel-metric b">
+        <div class="rm-label">Saldo Final</div>
+        <div class="rm-val" style="${saldo<0?'color:var(--red)':''}">${fmt(saldo)}</div>
+      </div>
+    </div>
+
+    ${formaCores.length ? `
+    <div class="rel-section-title">💳 Entradas por Forma de Pagamento</div>
+    ${formaCores.map(([forma,val])=>{
+      const cor = CORES_FORMA[forma]||'#6b7280';
+      const pct = totalEnt>0 ? (val/totalEnt*100).toFixed(1) : 0;
+      return `<div class="rel-forma-row">
+        <div class="rel-forma-dot" style="background:${cor}"></div>
+        <div class="rel-forma-name">${forma}</div>
+        <div class="fb-bar-wrap" style="width:100px;"><div class="fb-bar" style="width:${pct}%;background:${cor}"></div></div>
+        <div class="rel-forma-val">${fmt(val)}</div>
+        <div class="rel-forma-pct">${pct}%</div>
+      </div>`;
+    }).join('')}
+    ` : ''}
+
+    ${lista.length ? `
+    <div class="rel-section-title">📋 Todos os Lançamentos</div>
+    <table class="rel-table">
+      <thead>
+        <tr>
+          <th>Hora</th><th>Tipo</th><th>Forma</th><th>Categoria</th><th>Descrição</th><th>Operador</th><th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lista.slice().reverse().map(l=>`
+          <tr>
+            <td style="font-family:var(--mono);font-size:11px;">${fmtHora(l.criado_em)}</td>
+            <td>${l.tipo==='entrada'?'⬆️ Entrada':'⬇️ Saída'}</td>
+            <td>${l.forma}</td>
+            <td style="color:var(--muted);font-size:12px;">${l.categoria||'—'}</td>
+            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.descricao||'—'}</td>
+            <td style="color:var(--muted);font-size:12px;">${l.usuario||'—'}</td>
+            <td class="${l.tipo==='entrada'?'val-pos':'val-neg'}">${l.tipo==='entrada'?'+':'-'} ${fmt(l.valor)}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+    ` : '<div style="text-align:center;padding:24px;color:var(--faint);">Nenhum lançamento registrado neste dia.</div>'}
+  `;
+}
+
+// Fechar modal ao clicar fora
+document.getElementById('modalRelatorio').addEventListener('click', function(e){
+  if(e.target === this) fecharModal();
+});
+</script>
+</body>
+</html>

@@ -266,34 +266,6 @@ async function confirmarRecebimento(){
       body:JSON.stringify({pedido_id:pedidoSelecionado.id,forma:formaFinal,valor,observacao:obs,usuario:usuarioLogado,novo_status:novoStatus,novo_valor_recebido:novoRecebido})});
     if(res.ok){
       showToast(`✅ ${fmtBRL(valor)} via ${formaFinal}!`);
-      // ── Registrar automaticamente no caixa ──
-      try {
-        const hoje = new Date().toISOString().slice(0,10);
-        const cliente = pedidoSelecionado.nome_cliente || pedidoSelecionado.nomeCliente || '';
-        await fetch('/api/caixa', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({
-            tipo:      'entrada',
-            forma:     formaFinal,
-            valor:     valor,
-            descricao: `Recebimento pedido #${pedidoSelecionado.id} — ${cliente}`,
-            categoria: 'Recebimento',
-            usuario:   usuarioLogado,
-            data:      hoje
-          })
-        });
-        // Atualizar localStorage do caixa também
-        const key = `mpx_lancamentos_${hoje}`;
-        const local = JSON.parse(localStorage.getItem(key)||'[]');
-        local.push({
-          id: Date.now()+Math.random(), tipo:'entrada', forma:formaFinal,
-          valor, descricao:`Recebimento pedido #${pedidoSelecionado.id} — ${cliente}`,
-          categoria:'Recebimento', usuario:usuarioLogado,
-          data:hoje, criado_em: new Date().toISOString()
-        });
-        localStorage.setItem(key, JSON.stringify(local));
-      } catch(_){}
       pedidoSelecionado.valor_recebido=novoRecebido;pedidoSelecionado.status=novoStatus;
       const idx=todosPedidos.findIndex(p=>p.id===pedidoSelecionado.id);
       if(idx>=0){todosPedidos[idx].valor_recebido=novoRecebido;todosPedidos[idx].status=novoStatus;}

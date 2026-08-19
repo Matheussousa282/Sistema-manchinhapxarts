@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Estoque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #101826;
+    --ink-soft: #4b5768;
+    --muted: #8a94a3;
+    --paper: #eef1f6;
+    --surface: #ffffff;
+    --border: #dde2ea;
+    --border-soft: #e9ecf2;
+
+    --primary: #0e6b5c;
+    --primary-hover: #0a5548;
+    --primary-tint: #e4f2ee;
+
+    --amber: #b5750a;
+    --amber-tint: #fdf3e0;
+    --red: #b0362b;
+    --red-tint: #fbe9e7;
+
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(16,24,38,.04), 0 8px 24px -12px rgba(16,24,38,.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: "Inter", -apple-system, Segoe UI, Arial, sans-serif;
+    background: var(--paper);
+    margin: 0;
+    padding: 32px 20px 60px;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  /* ---------- Header ---------- */
+  .page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 26px;
+    flex-wrap: wrap;
+  }
+  .page-head h1 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+  }
+  .page-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-tint);
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+
+  /* ---------- Summary cards ---------- */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .stat .label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 8px;
+  }
+  .stat .value {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .stat.warn .value { color: var(--amber); }
+  .stat.danger .value { color: var(--red); }
+  .stat.ok .value { color: var(--primary); }
+
+  /* ---------- Panel / form ---------- */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .panel-head h2 {
+    font-size: 15px;
+    margin: 0;
+    font-weight: 700;
+  }
+  .panel-head .toggle-icon {
+    color: var(--muted);
+    font-size: 13px;
+    transition: transform .2s;
+  }
+  .panel.collapsed .toggle-icon { transform: rotate(-90deg); }
+  .panel.collapsed .panel-body { display: none; }
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 4px 20px 20px;
+  }
+  form .field { display: flex; flex-direction: column; gap: 6px; }
+  form .field.full { grid-column: 1 / -1; }
+  label { font-size: 12.5px; font-weight: 600; color: var(--ink-soft); }
+  input, select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    font-family: inherit;
+    width: 100%;
+    background: var(--surface);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input:focus, select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-tint);
+  }
+  .form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  .btn {
+    padding: 11px 18px;
+    background: var(--primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    transition: background .15s, transform .05s;
+  }
+  .btn:hover { background: var(--primary-hover); }
+  .btn:active { transform: translateY(1px); }
+  .btn.secondary {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+  }
+  .btn.secondary:hover { background: var(--border-soft); }
+  #editingBadge {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--amber);
+    background: var(--amber-tint);
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: none;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .toolbar input, .toolbar select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    background: var(--surface);
+  }
+  .search-field { position: relative; flex: 2; min-width: 220px; }
+  .search-field input { width: 100%; padding-left: 34px; }
+  .search-field::before {
+    content: "";
+    position: absolute;
+    left: 12px; top: 50%; transform: translateY(-50%);
+    width: 13px; height: 13px;
+    border: 2px solid var(--muted);
+    border-radius: 50%;
+  }
+  .search-field::after {
+    content: "";
+    position: absolute;
+    left: 21px; top: 62%;
+    width: 6px; height: 2px;
+    background: var(--muted);
+    transform: rotate(45deg);
+  }
+  .toolbar select { flex: 1; min-width: 160px; }
+
+  /* ---------- Table ---------- */
+  .table-container {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #f7f9fc;
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    text-align: left;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  thead th:hover { color: var(--ink); }
+  thead th.sort-asc::after { content: " ▲"; font-size: 9px; color: var(--primary); }
+  thead th.sort-desc::after { content: " ▼"; font-size: 9px; color: var(--primary); }
+
+  tbody tr { border-bottom: 1px solid var(--border-soft); position: relative; transition: background .1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafbfd; }
+  tbody tr.status-esgotado { box-shadow: inset 3px 0 0 var(--red); }
+  tbody tr.status-baixo { box-shadow: inset 3px 0 0 var(--amber); }
+  tbody tr.status-ok { box-shadow: inset 3px 0 0 var(--primary); }
+
+  td { padding: 12px 16px; font-size: 14px; color: var(--ink); vertical-align: middle; }
+  td.codigo { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--ink-soft); }
+  td.preco { font-family: "JetBrains Mono", monospace; font-weight: 600; }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge.baixo { background: var(--amber-tint); color: var(--amber); }
+  .badge.esgotado { background: var(--red-tint); color: var(--red); }
+
+  .qty-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .qty-btn {
+    width: 26px; height: 26px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    padding: 0;
+    transition: background .12s, color .12s;
+  }
+  .qty-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+  .qty-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .qty-btn:disabled:hover { background: var(--surface); color: var(--ink-soft); }
+  .qty-value { min-width: 26px; text-align: center; font-weight: 700; font-family: "JetBrains Mono", monospace; }
+
+  .actions { display: flex; gap: 6px; white-space: nowrap; }
+  .action-btn {
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    background: var(--surface);
+    color: var(--ink-soft);
+    transition: .15s;
+  }
+  .action-btn.edit-btn:hover { background: var(--primary-tint); color: var(--primary); border-color: var(--primary); }
+  .action-btn.delete-btn:hover { background: var(--red-tint); color: var(--red); border-color: var(--red); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 32px; margin-bottom: 10px; opacity: .6; }
+
+  .back { text-align: center; margin-top: 28px; }
+  .back a { color: var(--ink-soft); text-decoration: none; font-size: 13.5px; font-weight: 600; }
+  .back a:hover { color: var(--primary); }
+
+  /* ---------- Toast ---------- */
+  #toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    z-index: 100;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.error { background: var(--red); }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 700px) {
+    body { padding: 20px 12px 48px; }
+    .page-head h1 { font-size: 21px; }
+    .page-head p { font-size: 13px; }
+
+    .summary { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat { padding: 12px 14px; }
+    .stat .value { font-size: 19px; }
+
+    .toolbar { flex-direction: column; }
+    .search-field, .toolbar select { width: 100%; min-width: 0; }
+
+    form { grid-template-columns: 1fr; padding: 4px 16px 18px; }
+    .panel-head { padding: 14px 16px; }
+    .form-actions { flex-wrap: wrap; }
+    .form-actions .btn, .form-actions .btn.secondary { width: 100%; text-align: center; }
+
+    /* Tabela vira lista de cards */
+    .table-container { border-radius: 10px; overflow-x: visible; }
+    table, thead, tbody, tr { display: block; width: 100%; }
+    thead { display: none; }
+    tbody tr {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      box-shadow: none !important;
+      border-left: 4px solid var(--border);
+    }
+    tbody tr.status-ok { border-left-color: var(--primary); }
+    tbody tr.status-baixo { border-left-color: var(--amber); }
+    tbody tr.status-esgotado { border-left-color: var(--red); }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 7px 0;
+      border: none;
+      font-size: 14px;
+      text-align: right;
+    }
+    td::before {
+      content: attr(data-label);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--muted);
+      text-align: left;
+      flex-shrink: 0;
+    }
+    td.codigo, td.preco { font-size: 13.5px; }
+
+    td.td-actions { flex-direction: column; align-items: stretch; gap: 8px; padding-top: 12px; }
+    td.td-actions::before { margin-bottom: 2px; }
+    td.td-actions .actions { width: 100%; justify-content: stretch; }
+    td.td-actions .action-btn { flex: 1; text-align: center; }
+
+    .qty-control { margin-left: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Estoque</div>
+      <h1>Controle de Estoque</h1>
+      <p>Cadastre produtos e mantenha as quantidades sempre atualizadas.</p>
+    </div>
+  </div>
+
+  <div class="summary" id="summary">
+    <div class="stat">
+      <div class="label">Produtos cadastrados</div>
+      <div class="value" id="statTotal">0</div>
+    </div>
+    <div class="stat ok">
+      <div class="label">Valor em estoque</div>
+      <div class="value mono" id="statValor">R$ 0,00</div>
+    </div>
+    <div class="stat warn">
+      <div class="label">Estoque baixo</div>
+      <div class="value" id="statBaixo">0</div>
+    </div>
+    <div class="stat danger">
+      <div class="label">Esgotados</div>
+      <div class="value" id="statEsgotado">0</div>
+    </div>
+  </div>
+
+  <div class="panel collapsed" id="formPanel">
+    <div class="panel-head" id="formPanelHead">
+      <h2>Cadastrar novo produto</h2>
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="panel-body">
+      <form id="formProduto">
+        <div class="field"><label for="codigo">Código</label><input type="text" id="codigo" required></div>
+        <div class="field full"><label for="descricao">Descrição do produto</label><input type="text" id="descricao" required></div>
+        <div class="field"><label for="tamanho">Tamanho</label><input type="text" id="tamanho" required></div>
+        <div class="field"><label for="quantidade">Quantidade em estoque</label><input type="number" id="quantidade" min="0" required></div>
+        <div class="field"><label for="preco">Preço de venda (R$)</label><input type="number" id="preco" step="0.01" min="0" required></div>
+        <div class="form-actions">
+          <button type="submit" class="btn" id="submitBtn">Cadastrar produto</button>
+          <button type="button" class="btn secondary" id="cancelEditBtn" style="display:none;">Cancelar edição</button>
+          <span id="editingBadge">Editando produto</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-field">
+      <input type="text" id="buscarProduto" placeholder="Buscar por código ou descrição...">
+    </div>
+    <select id="filtrarTamanho"><option value="">Todos os tamanhos</option></select>
+    <select id="filtrarStatus">
+      <option value="">Todos os status</option>
+      <option value="ok">Estoque normal</option>
+      <option value="baixo">Estoque baixo</option>
+      <option value="esgotado">Esgotado</option>
+    </select>
+  </div>
+
+  <div class="table-container">
+    <table id="tabelaEstoque">
+      <thead>
+        <tr>
+          <th data-key="codigo">Código</th>
+          <th data-key="descricao">Descrição</th>
+          <th data-key="tamanho">Tamanho</th>
+          <th data-key="quantidade">Quantidade</th>
+          <th data-key="preco">Preço</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="icon">🗃️</div>
+      <div>Nenhum produto encontrado.</div>
+    </div>
+  </div>
+
+  <div class="back"><a href="painel.html">← Voltar ao painel</a></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// Verificar se o usuário está logado
+if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+  window.location.href = 'index.html';
+}
+
+const LIMITE_BAIXO = 5; // abaixo (e incluindo) esse valor, o item entra como "estoque baixo"
+
+const form = document.getElementById("formProduto");
+const tabela = document.querySelector("#tabelaEstoque tbody");
+const emptyState = document.getElementById("emptyState");
+const buscarProduto = document.getElementById("buscarProduto");
+const filtrarTamanho = document.getElementById("filtrarTamanho");
+const filtrarStatus = document.getElementById("filtrarStatus");
+const thElements = document.querySelectorAll("#tabelaEstoque th[data-key]");
+const submitBtn = document.getElementById("submitBtn");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+const editingBadge = document.getElementById("editingBadge");
+const formPanel = document.getElementById("formPanel");
+const formPanelHead = document.getElementById("formPanelHead");
+
+let estoque = [];
+let editId = null;
+let sortConfig = { key: null, direction: 'asc' };
+
+// ---------- Toast ----------
+let toastTimer = null;
+function showToast(msg, isError = false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.toggle('error', isError);
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ---------- Painel do formulário ----------
+formPanelHead.addEventListener('click', () => formPanel.classList.toggle('collapsed'));
+
+function abrirFormularioParaEdicao() {
+  formPanel.classList.remove('collapsed');
+}
+
+// ---------- Fetch ----------
+async function fetchProdutos() {
+  try {
+    const res = await fetch('/api/produtos');
+    if (!res.ok) throw new Error('Erro ao buscar produtos');
+    estoque = await res.json();
+    renderTabela();
+  } catch (err) {
+    console.error(err);
+    showToast(err.message, true);
+  }
+}
+
+function statusDoProduto(produto) {
+  const qtd = Number(produto.quantidade);
+  if (qtd <= 0) return 'esgotado';
+  if (qtd <= LIMITE_BAIXO) return 'baixo';
+  return 'ok';
+}
+
+function atualizarResumo() {
+  const total = estoque.length;
+  const valor = estoque.reduce((soma, p) => soma + Number(p.quantidade) * Number(p.preco), 0);
+  const baixo = estoque.filter(p => statusDoProduto(p) === 'baixo').length;
+  const esgotado = estoque.filter(p => statusDoProduto(p) === 'esgotado').length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statValor').textContent = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  document.getElementById('statBaixo').textContent = baixo;
+  document.getElementById('statEsgotado').textContent = esgotado;
+}
+
+function atualizarFiltroTamanhos() {
+  const atual = filtrarTamanho.value;
+  const tamanhos = [...new Set(estoque.map(p => p.tamanho))].sort();
+  filtrarTamanho.innerHTML = '<option value="">Todos os tamanhos</option>';
+  tamanhos.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    filtrarTamanho.appendChild(opt);
+  });
+  filtrarTamanho.value = atual;
+}
+
+function renderTabela() {
+  tabela.innerHTML = '';
+  const busca = buscarProduto.value.toLowerCase().trim();
+  const filtroTamanho = filtrarTamanho.value;
+  const filtroStatus = filtrarStatus.value;
+
+  let produtosFiltrados = estoque.filter(p =>
+    (p.descricao.toLowerCase().includes(busca) || p.codigo.toLowerCase().includes(busca)) &&
+    (filtroTamanho === "" || p.tamanho === filtroTamanho) &&
+    (filtroStatus === "" || statusDoProduto(p) === filtroStatus)
+  );
+
+  if (sortConfig.key) {
+    produtosFiltrados.sort((a, b) => {
+      let valA = a[sortConfig.key]; let valB = b[sortConfig.key];
+      if (sortConfig.key === 'preco' || sortConfig.key === 'quantidade') { valA = parseFloat(valA); valB = parseFloat(valB); }
+      else { valA = valA.toString().toLowerCase(); valB = valB.toString().toLowerCase(); }
+      if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  emptyState.style.display = produtosFiltrados.length === 0 ? 'block' : 'none';
+
+  produtosFiltrados.forEach(produto => {
+    const status = statusDoProduto(produto);
+    const tr = document.createElement('tr');
+    tr.className = `status-${status}`;
+
+    let badge = '';
+    if (status === 'baixo') badge = '<span class="badge baixo">Baixo</span>';
+    if (status === 'esgotado') badge = '<span class="badge esgotado">Esgotado</span>';
+
+    tr.innerHTML = `
+      <td class="codigo" data-label="Código">${produto.codigo}</td>
+      <td data-label="Descrição">${produto.descricao}${badge}</td>
+      <td data-label="Tamanho">${produto.tamanho}</td>
+      <td data-label="Quantidade">
+        <div class="qty-control">
+          <button type="button" class="qty-btn" data-action="dec" data-id="${produto.id}" ${produto.quantidade <= 0 ? 'disabled' : ''}>−</button>
+          <span class="qty-value">${produto.quantidade}</span>
+          <button type="button" class="qty-btn" data-action="inc" data-id="${produto.id}">+</button>
+        </div>
+      </td>
+      <td class="preco" data-label="Preço">R$ ${parseFloat(produto.preco).toFixed(2)}</td>
+      <td class="td-actions" data-label="Ações">
+        <div class="actions">
+          <button type="button" class="action-btn edit-btn" data-id="${produto.id}">Editar</button>
+          <button type="button" class="action-btn delete-btn" data-id="${produto.id}">Excluir</button>
+        </div>
+      </td>
+    `;
+    tabela.appendChild(tr);
+  });
+
+  atualizarFiltroTamanhos();
+  atualizarSetas();
+  atualizarResumo();
+}
+
+function atualizarSetas() {
+  thElements.forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (sortConfig.key === th.dataset.key) th.classList.add(sortConfig.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+  });
+}
+
+// ---------- Salvar (criar/editar) ----------
+async function salvarProduto(produto) {
+  try {
+    let res;
+    if (editId) {
+      produto.id = editId;
+      res = await fetch('/api/produtos', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(produto) });
+    } else {
+      res = await fetch('/api/produtos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(produto) });
+    }
+    if (!res.ok) throw new Error('Erro ao salvar produto');
+    const data = await res.json();
+    if (editId) {
+      const idx = estoque.findIndex(p => p.id === editId);
+      if (idx !== -1) estoque[idx] = data;
+      showToast('Produto atualizado com sucesso');
+      sairModoEdicao();
+    } else {
+      estoque.unshift(data);
+      showToast('Produto cadastrado com sucesso');
+    }
+    form.reset();
+    renderTabela();
+  } catch (err) {
+    console.error(err);
+    showToast(err.message, true);
+  }
+}
+
+// ---------- Ajuste rápido de quantidade (reposição) ----------
+async function ajustarQuantidade(id, delta) {
+  const produto = estoque.find(p => p.id === id);
+  if (!produto) return;
+  const novaQtd = Math.max(0, Number(produto.quantidade) + delta);
+  if (novaQtd === Number(produto.quantidade)) return;
+
+  const payload = {
+    id: produto.id,
+    codigo: produto.codigo,
+    descricao: produto.descricao,
+    tamanho: produto.tamanho,
+    quantidade: novaQtd,
+    preco: produto.preco
+  };
+
+  try {
+    const res = await fetch('/api/produtos', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('Erro ao atualizar quantidade');
+    const data = await res.json();
+    const idx = estoque.findIndex(p => p.id === id);
+    if (idx !== -1) estoque[idx] = data;
+    renderTabela();
+  } catch (err) {
+    console.error(err);
+    showToast(err.message, true);
+  }
+}
+
+// ---------- Excluir ----------
+async function excluirProduto(id) {
+  if (!confirm('Deseja realmente excluir este produto?')) return;
+  try {
+    const res = await fetch(`/api/produtos?id=${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Erro ao excluir produto');
+    estoque = estoque.filter(p => p.id !== id);
+    if (editId === id) sairModoEdicao();
+    renderTabela();
+    showToast('Produto excluído');
+  } catch (err) {
+    console.error(err);
+    showToast(err.message, true);
+  }
+}
+
+// ---------- Editar (BUG CORRIGIDO: busca por id, não por índice da lista filtrada) ----------
+function editarProduto(id) {
+  const produto = estoque.find(p => p.id === id);
+  if (!produto) {
+    showToast('Produto não encontrado', true);
+    return;
+  }
+  document.getElementById('codigo').value = produto.codigo;
+  document.getElementById('descricao').value = produto.descricao;
+  document.getElementById('tamanho').value = produto.tamanho;
+  document.getElementById('quantidade').value = produto.quantidade;
+  document.getElementById('preco').value = produto.preco;
+
+  editId = produto.id;
+  submitBtn.textContent = 'Salvar alterações';
+  cancelEditBtn.style.display = 'inline-block';
+  editingBadge.style.display = 'inline-block';
+
+  abrirFormularioParaEdicao();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function sairModoEdicao() {
+  editId = null;
+  form.reset();
+  submitBtn.textContent = 'Cadastrar produto';
+  cancelEditBtn.style.display = 'none';
+  editingBadge.style.display = 'none';
+}
+
+// ---------- Eventos ----------
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const produto = {
+    codigo: document.getElementById('codigo').value.trim(),
+    descricao: document.getElementById('descricao').value.trim(),
+    tamanho: document.getElementById('tamanho').value.trim(),
+    quantidade: parseInt(document.getElementById('quantidade').value),
+    preco: parseFloat(document.getElementById('preco').value)
+  };
+  salvarProduto(produto);
+});
+
+cancelEditBtn.addEventListener('click', sairModoEdicao);
+
+tabela.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const id = Number(btn.dataset.id);
+
+  if (btn.classList.contains('edit-btn')) editarProduto(id);
+  if (btn.classList.contains('delete-btn')) excluirProduto(id);
+  if (btn.dataset.action === 'inc') ajustarQuantidade(id, 1);
+  if (btn.dataset.action === 'dec') ajustarQuantidade(id, -1);
+});
+
+buscarProduto.addEventListener('input', renderTabela);
+filtrarTamanho.addEventListener('change', renderTabela);
+filtrarStatus.addEventListener('change', renderTabela);
+thElements.forEach(th => th.addEventListener('click', () => {
+  const key = th.dataset.key;
+  if (sortConfig.key === key) sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+  else { sortConfig.key = key; sortConfig.direction = 'asc'; }
+  renderTabela();
+}));
+
+fetchProdutos();
+</script>
+</body>
+</html>
